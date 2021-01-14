@@ -7,14 +7,12 @@ dotenv_1.default.config();
 const { TOKEN } = process.env;
 const start = async () => {
     const client = new discord_1.Client({
-        classes: [
-            `${__dirname}/*Discord.ts`,
-            `${__dirname}/*Discord.js` // If you compile using "tsc" the file extension change to .js
-        ],
+        classes: [`${__dirname}/Discord.js`],
         silent: false,
         variablesChar: ":"
     });
-    await client.login(TOKEN);
+    if (typeof TOKEN === "string")
+        await client.login(TOKEN);
 };
 start();
 //# sourceMappingURL=index.js.map
