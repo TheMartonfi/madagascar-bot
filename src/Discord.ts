@@ -9,7 +9,8 @@ import {
 
 const commandPrefix = "!";
 @Discord(commandPrefix, {
-	import: [`${__dirname}/commands/*.js`]
+	import: [`${__dirname}/commands/*.js`, `${__dirname}/events/*.js`]
+	// import: [`${__dirname}/commands/*.js`]
 })
 export abstract class DiscordApp {
 	@Command("commands")

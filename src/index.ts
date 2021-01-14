@@ -11,7 +11,7 @@ const start = async () => {
 		variablesChar: ":"
 	});
 
-	if (typeof TOKEN === "string") await client.login(TOKEN);
+	await client.login(TOKEN);
 };
 
 start();
