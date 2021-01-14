@@ -28,7 +28,6 @@ tslib_1.__decorate([
 DiscordApp = tslib_1.__decorate([
     discord_1.Discord(commandPrefix, {
         import: [`${__dirname}/commands/*.js`, `${__dirname}/events/*.js`]
-        // import: [`${__dirname}/commands/*.js`]
     })
 ], DiscordApp);
 exports.DiscordApp = DiscordApp;
