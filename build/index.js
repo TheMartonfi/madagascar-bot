@@ -1,17 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const dotenv_1 = tslib_1.__importDefault(require("dotenv"));
 const discord_1 = require("@typeit/discord");
-dotenv_1.default.config();
-const { TOKEN } = process.env;
+const settings_1 = require("./settings");
 const start = async () => {
     const client = new discord_1.Client({
         classes: [`${__dirname}/Discord.js`],
         silent: false,
         variablesChar: ":"
     });
-    await client.login(TOKEN);
+    await client.login(settings_1.BOT_TOKEN);
 };
 start();
 //# sourceMappingURL=index.js.map

@@ -1,8 +1,5 @@
-import dotenv from "dotenv";
 import { Client } from "@typeit/discord";
-
-dotenv.config();
-const { TOKEN } = process.env;
+import { BOT_TOKEN } from "./settings";
 
 const start = async () => {
 	const client = new Client({
@@ -11,7 +8,7 @@ const start = async () => {
 		variablesChar: ":"
 	});
 
-	await client.login(TOKEN);
+	await client.login(BOT_TOKEN);
 };
 
 start();

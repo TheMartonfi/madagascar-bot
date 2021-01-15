@@ -3,25 +3,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Silence = void 0;
 const tslib_1 = require("tslib");
 const discord_1 = require("@typeit/discord");
+const settings_1 = require("../settings");
 const NotBot_1 = require("../guards/NotBot");
+const OnlyRoom_1 = require("../guards/OnlyRoom");
 class Silence {
     async silence([command]) {
-        const wordJarRoomId = "748827509956804618";
-        // Extract this check into a guard
-        if (command.channel.id === wordJarRoomId) {
-            const ricoId = "239891983751970824";
-            const roleName = "toxic";
-            const trigger = "🇳 +1";
-            const role = command.guild.roles.cache.find((role) => role.name === roleName);
-            const member = command.guild.member(ricoId);
-            if (command.content === trigger)
-                member.roles.add(role);
+        const member = await command.guild.members.fetch({ user: settings_1.RICO_USER_ID });
+        if (command.content === settings_1.RICO_TRIGGER) {
+            member.voice.kick();
         }
     }
 }
 tslib_1.__decorate([
     discord_1.On("message"),
-    discord_1.Guard(NotBot_1.NotBot),
+    discord_1.Guard(NotBot_1.NotBot, OnlyRoom_1.OnlyRoom(settings_1.RICO_ROOM_ID)),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [Object]),
     tslib_1.__metadata("design:returntype", Promise)

@@ -1,3 +1,4 @@
+import { PREFIX } from "./settings";
 import {
 	Discord,
 	Client,
@@ -7,22 +8,21 @@ import {
 	CommandNotFound
 } from "@typeit/discord";
 
-const commandPrefix = "!";
-@Discord(commandPrefix, {
+@Discord(PREFIX, {
 	import: [`${__dirname}/commands/*.js`, `${__dirname}/events/*.js`]
 })
 export abstract class DiscordApp {
 	@Command("commands")
 	private commands(command: CommandMessage) {
-		const commandsList = Client.getCommands().map(
-			(command: CommandInfos) => commandPrefix + command.commandName
+		const commandList = Client.getCommands().map(
+			(command: CommandInfos) => PREFIX + command.commandName
 		);
 
-		command.reply(commandsList.join(", "));
+		command.channel.send(commandList.join(", "));
 	}
 
 	@CommandNotFound()
 	private notFoundA(command: CommandMessage) {
-		command.reply("Command not found");
+		command.channel.send("Command not found");
 	}
 }

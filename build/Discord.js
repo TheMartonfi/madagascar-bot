@@ -2,15 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DiscordApp = void 0;
 const tslib_1 = require("tslib");
+const settings_1 = require("./settings");
 const discord_1 = require("@typeit/discord");
-const commandPrefix = "!";
 let DiscordApp = class DiscordApp {
     commands(command) {
-        const commandsList = discord_1.Client.getCommands().map((command) => commandPrefix + command.commandName);
-        command.reply(commandsList.join(", "));
+        const commandList = discord_1.Client.getCommands().map((command) => settings_1.PREFIX + command.commandName);
+        command.channel.send(commandList.join(", "));
     }
     notFoundA(command) {
-        command.reply("Command not found");
+        command.channel.send("Command not found");
     }
 };
 tslib_1.__decorate([
@@ -26,7 +26,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", void 0)
 ], DiscordApp.prototype, "notFoundA", null);
 DiscordApp = tslib_1.__decorate([
-    discord_1.Discord(commandPrefix, {
+    discord_1.Discord(settings_1.PREFIX, {
         import: [`${__dirname}/commands/*.js`, `${__dirname}/events/*.js`]
     })
 ], DiscordApp);

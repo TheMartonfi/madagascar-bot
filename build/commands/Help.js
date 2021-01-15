@@ -5,7 +5,7 @@ const tslib_1 = require("tslib");
 const discord_1 = require("@typeit/discord");
 class Help {
     help(command) {
-        command.reply("No");
+        command.channel.send("No");
     }
 }
 tslib_1.__decorate([
