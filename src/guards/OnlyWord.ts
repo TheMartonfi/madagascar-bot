@@ -1,12 +1,12 @@
 import { GuardFunction } from "@typeit/discord";
 
-export const OnlyRoom = (roomId: string) => {
+export const OnlyWord = (word: string) => {
 	const guard: GuardFunction<"message"> = async (
-		[{ channel }],
+		[{ content }],
 		client,
 		next
 	) => {
-		if (channel.id === roomId) await next();
+		if (content === word) await next();
 	};
 
 	return guard;
