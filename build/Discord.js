@@ -8,9 +8,22 @@ const NotBot_1 = require("./guards/NotBot");
 const settings_1 = require("./settings");
 const basicCommands_json_1 = require("./basicCommands.json");
 const commandsCollection = new discord_js_1.Collection();
-const findCommand = (message) => commandsCollection.has(message);
+const hasCommand = (message) => commandsCollection.has(message);
+const getCommand = (message) => commandsCollection.get(message);
 basicCommands_json_1.commands.forEach(({ name, message }) => commandsCollection.set(settings_1.PREFIX + name, message));
 let DiscordApp = class DiscordApp {
+    async basicCommands([{ content, channel }]) {
+        const lowerCaseMessage = content.toLowerCase();
+        if (!hasCommand(lowerCaseMessage))
+            return;
+        try {
+            channel.send(getCommand(lowerCaseMessage));
+        }
+        catch (e) {
+            channel.send(`nah it brokey`);
+            console.log(e);
+        }
+    }
     commands({ channel }) {
         channel.send(discord_1.Client.getCommands()
             .map(({ commandName }) => settings_1.PREFIX + commandName)
@@ -19,25 +32,30 @@ let DiscordApp = class DiscordApp {
     memes({ channel }) {
         channel.send(basicCommands_json_1.commands.map(({ name }) => settings_1.PREFIX + name).join(", "));
     }
-    async basicCommands([{ content, channel }]) {
-        const lowerCaseMessage = content.toLowerCase();
-        if (!findCommand(lowerCaseMessage))
-            return;
-        try {
-            const commandMessage = commandsCollection.get(lowerCaseMessage);
-            channel.send(commandMessage);
-        }
-        catch (e) {
-            channel.send(`nah it brokey`);
-            console.log(e);
-        }
+    basicCommandsSearch({ channel, args: { search } }) {
+        const results = [];
+        basicCommands_json_1.commands.forEach(({ name }) => {
+            if (name.search(search.toLowerCase()) === -1)
+                return;
+            results.push(name);
+        });
+        return results.length
+            ? channel.send(`Found ${results.length}: ${results.join(", ")}`)
+            : channel.send("Meme not found");
     }
     notFoundA({ content, channel }) {
-        if (findCommand(content.toLowerCase()))
+        if (hasCommand(content.toLowerCase()))
             return;
         channel.send("Command not found");
     }
 };
+tslib_1.__decorate([
+    discord_1.On("message"),
+    discord_1.Guard(NotBot_1.NotBot),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:returntype", Promise)
+], DiscordApp.prototype, "basicCommands", null);
 tslib_1.__decorate([
     discord_1.Command("commands"),
     tslib_1.__metadata("design:type", Function),
@@ -51,12 +69,11 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", void 0)
 ], DiscordApp.prototype, "memes", null);
 tslib_1.__decorate([
-    discord_1.On("message"),
-    discord_1.Guard(NotBot_1.NotBot),
+    discord_1.Command("meme :search"),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
-    tslib_1.__metadata("design:returntype", Promise)
-], DiscordApp.prototype, "basicCommands", null);
+    tslib_1.__metadata("design:paramtypes", [discord_1.CommandMessage]),
+    tslib_1.__metadata("design:returntype", void 0)
+], DiscordApp.prototype, "basicCommandsSearch", null);
 tslib_1.__decorate([
     discord_1.CommandNotFound(),
     tslib_1.__metadata("design:type", Function),

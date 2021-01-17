@@ -16,7 +16,8 @@ import { commands } from "./basicCommands.json";
 
 const commandsCollection = new Collection();
 
-const findCommand = (message: string) => commandsCollection.has(message);
+const hasCommand = (message: string) => commandsCollection.has(message);
+const getCommand = (message: string) => commandsCollection.get(message);
 
 commands.forEach(({ name, message }) =>
 	commandsCollection.set(PREFIX + name, message)
@@ -26,6 +27,22 @@ commands.forEach(({ name, message }) =>
 	import: [`${__dirname}/commands/*.js`, `${__dirname}/events/*.js`]
 })
 export abstract class DiscordApp {
+	@On("message")
+	@Guard(NotBot)
+	private async basicCommands([
+		{ content, channel }
+	]: ArgsOf<"commandMessage">) {
+		const lowerCaseMessage = content.toLowerCase();
+		if (!hasCommand(lowerCaseMessage)) return;
+
+		try {
+			channel.send(getCommand(lowerCaseMessage));
+		} catch (e) {
+			channel.send(`nah it brokey`);
+			console.log(e);
+		}
+	}
+
 	@Command("commands")
 	private commands({ channel }: CommandMessage) {
 		channel.send(
@@ -40,26 +57,22 @@ export abstract class DiscordApp {
 		channel.send(commands.map(({ name }) => PREFIX + name).join(", "));
 	}
 
-	@On("message")
-	@Guard(NotBot)
-	private async basicCommands([
-		{ content, channel }
-	]: ArgsOf<"commandMessage">) {
-		const lowerCaseMessage = content.toLowerCase();
-		if (!findCommand(lowerCaseMessage)) return;
+	@Command("meme :search")
+	private basicCommandsSearch({ channel, args: { search } }: CommandMessage) {
+		const results: string[] = [];
+		commands.forEach(({ name }) => {
+			if (name.search(search.toLowerCase()) === -1) return;
+			results.push(name);
+		});
 
-		try {
-			const commandMessage = commandsCollection.get(lowerCaseMessage);
-			channel.send(commandMessage);
-		} catch (e) {
-			channel.send(`nah it brokey`);
-			console.log(e);
-		}
+		return results.length
+			? channel.send(`Found ${results.length}: ${results.join(", ")}`)
+			: channel.send("Meme not found");
 	}
 
 	@CommandNotFound()
 	private notFoundA({ content, channel }: CommandMessage) {
-		if (findCommand(content.toLowerCase())) return;
+		if (hasCommand(content.toLowerCase())) return;
 		channel.send("Command not found");
 	}
 }
