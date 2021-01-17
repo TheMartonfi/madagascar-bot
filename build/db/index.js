@@ -4,13 +4,16 @@ exports.WordCounts = exports.Memes = void 0;
 const tslib_1 = require("tslib");
 const sequelize_1 = tslib_1.__importDefault(require("sequelize"));
 const settings_1 = require("../settings");
-// @ts-ignore
-const sequelize = new sequelize_1.default("database", "user", "password", {
-    host: "localhost",
-    dialect: "sqlite",
-    logging: false,
-    storage: "database.sqlite"
-});
+const sequelize = settings_1.ENV === "development"
+    ? // @ts-ignore
+        new sequelize_1.default("database", "user", "password", {
+            host: "localhost",
+            dialect: "sqlite",
+            logging: false,
+            storage: "database.sqlite"
+        })
+    : // @ts-ignore
+        new sequelize_1.default(settings_1.DB_URL);
 exports.Memes = sequelize.define("memes", {
     name: {
         type: sequelize_1.default.STRING,

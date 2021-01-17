@@ -1,7 +1,10 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+export const { ENV } = process.env;
+export const { DB_URL } = process.env;
 export const DB_RESET = process.env.DB_RESET || false;
+
 export const PREFIX = process.env.PREFIX || "!";
 export const { BOT_TOKEN } = process.env;
 

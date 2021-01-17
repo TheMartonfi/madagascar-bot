@@ -1,13 +1,17 @@
 import Sequelize from "sequelize";
-import { DB_RESET, RICO_TRIGGER } from "../settings";
+import { ENV, DB_URL, DB_RESET, RICO_TRIGGER } from "../settings";
 
-// @ts-ignore
-const sequelize = new Sequelize("database", "user", "password", {
-	host: "localhost",
-	dialect: "sqlite",
-	logging: false,
-	storage: "database.sqlite"
-});
+const sequelize =
+	ENV === "development"
+		? // @ts-ignore
+		  new Sequelize("database", "user", "password", {
+				host: "localhost",
+				dialect: "sqlite",
+				logging: false,
+				storage: "database.sqlite"
+		  })
+		: // @ts-ignore
+		  new Sequelize(DB_URL);
 
 export const Memes = sequelize.define("memes", {
 	name: {
