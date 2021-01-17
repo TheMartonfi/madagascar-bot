@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.VoiceKickUser = void 0;
 const tslib_1 = require("tslib");
 const discord_1 = require("@typeit/discord");
+const db_1 = require("../db");
 const settings_1 = require("../settings");
 const NotBot_1 = require("../guards/NotBot");
 const OnlyRoom_1 = require("../guards/OnlyRoom");
@@ -12,6 +13,10 @@ class VoiceKickUser {
         try {
             const member = await guild.members.fetch({ user: settings_1.RICO_USER_ID });
             member.voice.kick();
+            const wordCount = await db_1.WordCounts.findOne({
+                where: { word: settings_1.RICO_TRIGGER }
+            });
+            wordCount.increment("count");
         }
         catch (e) {
             channel.send("nah it brokey");
