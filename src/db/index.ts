@@ -1,4 +1,5 @@
 import Sequelize from "sequelize";
+import { DB_RESET, RICO_TRIGGER } from "../settings";
 
 // @ts-ignore
 const sequelize = new Sequelize("database", "user", "password", {
@@ -32,5 +33,16 @@ export const WordCounts = sequelize.define("word_counts", {
 	}
 });
 
-Memes.sync();
-WordCounts.sync();
+const syncSequelize = async () => {
+	await Memes.sync({ force: DB_RESET });
+	await WordCounts.sync({ force: DB_RESET });
+
+	if (DB_RESET) {
+		WordCounts.create({
+			word: RICO_TRIGGER,
+			count: 0
+		});
+	}
+};
+
+syncSequelize();

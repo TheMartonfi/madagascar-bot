@@ -8,6 +8,7 @@
 	"scripts": {
 		"tsc:w": "tsc -w",
 		"start:dev": "concurrently \"npm run tsc:w\" \"nodemon build/index.js\"",
+		"db:reset": "DB_RESET=true concurrently \"npm run tsc:w\" \"nodemon build/index.js\"",
 		"start": "node build/index.js"
 	},
 	"dependencies": {

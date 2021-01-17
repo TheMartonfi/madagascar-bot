@@ -18,6 +18,7 @@ export abstract class VoiceKickUser {
 			const wordCount = await WordCounts.findOne({
 				where: { word: RICO_TRIGGER }
 			});
+
 			wordCount.increment("count");
 		} catch (e) {
 			channel.send("nah it brokey");
