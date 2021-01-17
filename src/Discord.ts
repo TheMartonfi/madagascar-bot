@@ -9,15 +9,18 @@ import {
 	Guard,
 	ArgsOf
 } from "@typeit/discord";
-import { Collection, Message } from "discord.js";
+import { Collection } from "discord.js";
 import { NotBot } from "./guards/NotBot";
 import { PREFIX } from "./settings";
 import { commands } from "./basicCommands.json";
 
 const commandsCollection = new Collection();
+
 const hasCommand = (message: string): boolean =>
 	commandsCollection.has(message);
-const getCommand = (message: string) => commandsCollection.get(message);
+
+const getCommand = (message: string): string | unknown =>
+	commandsCollection.get(message);
 
 commands.forEach(({ name, message }) =>
 	commandsCollection.set(PREFIX + name, message)
@@ -30,7 +33,7 @@ export abstract class DiscordApp {
 	@On("message")
 	@Guard(NotBot)
 	private async basicCommands([
-		{ content, channel, client }
+		{ content, channel }
 	]: ArgsOf<"commandMessage">): Promise<void> {
 		const lowerCaseMessage = content.toLowerCase();
 		if (!hasCommand(lowerCaseMessage)) return;
@@ -48,6 +51,7 @@ export abstract class DiscordApp {
 		channel.send(
 			Client.getCommands()
 				.map(({ commandName }: CommandInfos) => PREFIX + commandName)
+				.filter((name) => name !== "!commands")
 				.join(", ")
 		);
 	}
@@ -55,23 +59,6 @@ export abstract class DiscordApp {
 	@Command("memes")
 	private memes({ channel }: CommandMessage): void {
 		channel.send(commands.map(({ name }) => PREFIX + name).join(", "));
-	}
-
-	// Extract this into it's own file
-	@Command("meme :search")
-	private basicCommandsSearch({
-		channel,
-		args: { search }
-	}: CommandMessage): Promise<Message> {
-		const results: string[] = [];
-		commands.forEach(({ name }) => {
-			if (name.search(search.toLowerCase()) === -1) return;
-			results.push(name);
-		});
-
-		return results.length
-			? channel.send(`Found ${results.length}: ${results.join(", ")}`)
-			: channel.send("Meme not found");
 	}
 
 	@CommandNotFound()
