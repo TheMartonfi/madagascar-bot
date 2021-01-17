@@ -12,7 +12,7 @@ const hasCommand = (message) => commandsCollection.has(message);
 const getCommand = (message) => commandsCollection.get(message);
 basicCommands_json_1.commands.forEach(({ name, message }) => commandsCollection.set(settings_1.PREFIX + name, message));
 let DiscordApp = class DiscordApp {
-    async basicCommands([{ content, channel }]) {
+    async basicCommands([{ content, channel, client }]) {
         const lowerCaseMessage = content.toLowerCase();
         if (!hasCommand(lowerCaseMessage))
             return;
@@ -32,6 +32,7 @@ let DiscordApp = class DiscordApp {
     memes({ channel }) {
         channel.send(basicCommands_json_1.commands.map(({ name }) => settings_1.PREFIX + name).join(", "));
     }
+    // Extract this into it's own file
     basicCommandsSearch({ channel, args: { search } }) {
         const results = [];
         basicCommands_json_1.commands.forEach(({ name }) => {
@@ -72,7 +73,7 @@ tslib_1.__decorate([
     discord_1.Command("meme :search"),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [discord_1.CommandMessage]),
-    tslib_1.__metadata("design:returntype", void 0)
+    tslib_1.__metadata("design:returntype", Promise)
 ], DiscordApp.prototype, "basicCommandsSearch", null);
 tslib_1.__decorate([
     discord_1.CommandNotFound(),

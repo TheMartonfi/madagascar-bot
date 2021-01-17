@@ -4,8 +4,8 @@ exports.Help = void 0;
 const tslib_1 = require("tslib");
 const discord_1 = require("@typeit/discord");
 class Help {
-    help(command) {
-        command.channel.send("No");
+    help({ channel }) {
+        channel.send("No");
     }
 }
 tslib_1.__decorate([

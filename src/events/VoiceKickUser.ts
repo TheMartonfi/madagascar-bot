@@ -7,7 +7,9 @@ import { OnlyWord } from "../guards/OnlyWord";
 export abstract class VoiceKickUser {
 	@On("message")
 	@Guard(NotBot, OnlyRoom(RICO_ROOM_ID), OnlyWord(RICO_TRIGGER))
-	private async voiceKickUser([{ guild, channel }]: ArgsOf<"commandMessage">) {
+	private async voiceKickUser([
+		{ guild, channel }
+	]: ArgsOf<"commandMessage">): Promise<void> {
 		try {
 			const member = await guild.members.fetch({ user: RICO_USER_ID });
 			member.voice.kick();
