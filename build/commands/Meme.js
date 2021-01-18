@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Meme = void 0;
 const tslib_1 = require("tslib");
 const discord_1 = require("@typeit/discord");
+const index_1 = require("../index");
 const utils_1 = require("../utils");
 class Meme {
     memeCommandsSearch({ channel, args: { search } }) {
@@ -13,7 +14,9 @@ class Meme {
             results.push(name);
         });
         return results.length
-            ? channel.send(`Found ${results.length}: ${results.join(", ")}`)
+            ? results.length === 1
+                ? channel.send(index_1.memesCollection.get(results[0]))
+                : channel.send(`Found ${results.length} memes: ${results.join(", ")}`)
             : channel.send("Meme not found");
     }
 }

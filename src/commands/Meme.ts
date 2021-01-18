@@ -1,5 +1,6 @@
 import { Command, CommandMessage } from "@typeit/discord";
 import { Message } from "discord.js";
+import { memesCollection } from "../index";
 import { getMemeNames } from "../utils";
 
 export abstract class Meme {
@@ -16,7 +17,9 @@ export abstract class Meme {
 		});
 
 		return results.length
-			? channel.send(`Found ${results.length}: ${results.join(", ")}`)
+			? results.length === 1
+				? channel.send(memesCollection.get(results[0]))
+				: channel.send(`Found ${results.length} memes: ${results.join(", ")}`)
 			: channel.send("Meme not found");
 	}
 }
