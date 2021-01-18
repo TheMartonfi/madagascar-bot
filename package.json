@@ -7,8 +7,8 @@
 	"license": "MIT",
 	"scripts": {
 		"tsc:w": "tsc -w",
-		"start:dev": "concurrently \"npm run tsc:w\" \"nodemon build/index.js\"",
-		"db:reset": "DB_RESET=true concurrently \"npm run tsc:w\" \"nodemon build/index.js\"",
+		"start:dev": "concurrently \"yarn tsc:w\" \"nodemon build/index.js\"",
+		"db:reset": "DB_RESET=true concurrently \"yarn tsc:w\" \"nodemon build/index.js\"",
 		"start": "node build/index.js"
 	},
 	"dependencies": {
@@ -16,7 +16,7 @@
 		"discord.js": "^12.5.1",
 		"dotenv": "^8.2.0",
 		"sequelize": "^6.3.5",
-		"sqlite3": "^5.0.1"
+		"pg": "^8.5.1"
 	},
 	"devDependencies": {
 		"@types/node": "^14.14.21",

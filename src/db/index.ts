@@ -1,5 +1,5 @@
 import { Sequelize, Model, STRING, TEXT, INTEGER } from "sequelize";
-import { ENV, DB_RESET, RICO_TRIGGER } from "../settings";
+import { DB_URL, DB_RESET, RICO_TRIGGER } from "../settings";
 import { memeCommands } from "../memeCommands.json";
 
 export interface Meme extends Model {
@@ -12,12 +12,7 @@ export interface WordCount extends Model {
 	count: number;
 }
 
-const sequelize = new Sequelize("database", "user", "password", {
-	host: "localhost",
-	dialect: "sqlite",
-	logging: false,
-	storage: ENV === "development" ? "devDatabase.sqlite" : "database.sqlite"
-});
+const sequelize = new Sequelize(DB_URL);
 
 export const Memes = sequelize.define<Meme>("memes", {
 	name: {
