@@ -3,22 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DiscordApp = void 0;
 const tslib_1 = require("tslib");
 const discord_1 = require("@typeit/discord");
-const discord_js_1 = require("discord.js");
+const index_1 = require("./index");
 const NotBot_1 = require("./guards/NotBot");
 const settings_1 = require("./settings");
-const db_1 = require("./db");
-const commandsCollection = new discord_js_1.Collection();
-const commands = [];
-const getCommands = async () => {
-    const memes = await db_1.Memes.findAll({ attributes: ["name", "message"] });
-    memes.forEach((meme) => {
-        commandsCollection.set(settings_1.PREFIX + meme.name, meme.message);
-        commands.push(meme);
-    });
-};
-const hasCommand = (message) => commandsCollection.has(message);
-const getCommand = (message) => commandsCollection.get(message);
-getCommands();
+const hasCommand = (message) => index_1.commandsCollection.has(message);
+const getCommand = (message) => index_1.commandsCollection.get(message);
 let DiscordApp = class DiscordApp {
     async basicCommands([{ content, channel }]) {
         const lowerCaseMessage = content.toLowerCase();
@@ -39,7 +28,7 @@ let DiscordApp = class DiscordApp {
             .join(", "));
     }
     memes({ channel }) {
-        channel.send(commands.map(({ name }) => settings_1.PREFIX + name).join(", "));
+        channel.send(index_1.commands.map(({ name }) => settings_1.PREFIX + name).join(", "));
     }
     notFoundA({ content, channel }) {
         if (hasCommand(content.toLowerCase()))

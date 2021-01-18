@@ -9,30 +9,15 @@ import {
 	Guard,
 	ArgsOf
 } from "@typeit/discord";
-import { Collection } from "discord.js";
+import { commands, commandsCollection } from "./index";
 import { NotBot } from "./guards/NotBot";
 import { PREFIX } from "./settings";
-import { Memes, Meme } from "./db";
-
-const commandsCollection = new Collection();
-const commands: Meme[] = [];
-
-const getCommands = async (): Promise<void> => {
-	const memes = await Memes.findAll({ attributes: ["name", "message"] });
-
-	memes.forEach((meme) => {
-		commandsCollection.set(PREFIX + meme.name, meme.message);
-		commands.push(meme);
-	});
-};
 
 const hasCommand = (message: string): boolean =>
 	commandsCollection.has(message);
 
 const getCommand = (message: string): string | unknown =>
 	commandsCollection.get(message);
-
-getCommands();
 
 @Discord(PREFIX, {
 	import: [`${__dirname}/commands/*.js`, `${__dirname}/events/*.js`]
