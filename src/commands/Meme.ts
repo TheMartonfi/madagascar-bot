@@ -4,7 +4,7 @@ import { getMemeNames } from "../utils";
 
 export abstract class Meme {
 	@Command("meme :search")
-	private basicCommandsSearch({
+	private memeCommandsSearch({
 		channel,
 		args: { search }
 	}: CommandMessage): Promise<Message> {

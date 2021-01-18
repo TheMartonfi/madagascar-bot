@@ -5,7 +5,7 @@ const tslib_1 = require("tslib");
 const discord_1 = require("@typeit/discord");
 const utils_1 = require("../utils");
 class Meme {
-    basicCommandsSearch({ channel, args: { search } }) {
+    memeCommandsSearch({ channel, args: { search } }) {
         const results = [];
         utils_1.getMemeNames().forEach((name) => {
             if (name.search(String(search).toLowerCase()) === -1)
@@ -22,6 +22,6 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [discord_1.CommandMessage]),
     tslib_1.__metadata("design:returntype", Promise)
-], Meme.prototype, "basicCommandsSearch", null);
+], Meme.prototype, "memeCommandsSearch", null);
 exports.Meme = Meme;
 //# sourceMappingURL=Meme.js.map

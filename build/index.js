@@ -16,9 +16,7 @@ const start = async () => {
 };
 const setMemeCommands = async () => {
     const memes = await db_1.Memes.findAll({ attributes: ["name", "message"] });
-    memes.forEach(({ name, message }) => {
-        exports.memesCollection.set(settings_1.PREFIX + name, message);
-    });
+    memes.forEach(({ name, message }) => exports.memesCollection.set(settings_1.PREFIX + name, message));
 };
 setMemeCommands();
 start();

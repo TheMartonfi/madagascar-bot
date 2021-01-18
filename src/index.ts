@@ -18,9 +18,9 @@ const start = async (): Promise<void> => {
 const setMemeCommands = async (): Promise<void> => {
 	const memes = await Memes.findAll({ attributes: ["name", "message"] });
 
-	memes.forEach(({ name, message }) => {
-		memesCollection.set(PREFIX + name, message);
-	});
+	memes.forEach(({ name, message }) =>
+		memesCollection.set(PREFIX + name, message)
+	);
 };
 
 setMemeCommands();
