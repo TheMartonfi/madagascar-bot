@@ -4,6 +4,7 @@ exports.WordCounts = exports.Memes = void 0;
 const tslib_1 = require("tslib");
 const sequelize_1 = tslib_1.__importDefault(require("sequelize"));
 const settings_1 = require("../settings");
+const basicCommands_json_1 = require("../basicCommands.json");
 const sequelize = settings_1.ENV === "development"
     ? // @ts-ignore
         new sequelize_1.default("database", "user", "password", {
@@ -44,6 +45,10 @@ const syncSequelize = async () => {
             word: settings_1.RICO_TRIGGER,
             count: 33
         });
+        basicCommands_json_1.commands.forEach(({ name, message }) => exports.Memes.create({
+            name,
+            message
+        }));
     }
 };
 syncSequelize();

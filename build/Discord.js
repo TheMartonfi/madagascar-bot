@@ -6,11 +6,19 @@ const discord_1 = require("@typeit/discord");
 const discord_js_1 = require("discord.js");
 const NotBot_1 = require("./guards/NotBot");
 const settings_1 = require("./settings");
-const basicCommands_json_1 = require("./basicCommands.json");
+const db_1 = require("./db");
 const commandsCollection = new discord_js_1.Collection();
+const commands = [];
+const getCommands = async () => {
+    const memes = await db_1.Memes.findAll({ attributes: ["name"] });
+    memes.forEach(({ name, message }) => {
+        commandsCollection.set(settings_1.PREFIX + name, message);
+        commands.push({ name, message });
+    });
+};
 const hasCommand = (message) => commandsCollection.has(message);
 const getCommand = (message) => commandsCollection.get(message);
-basicCommands_json_1.commands.forEach(({ name, message }) => commandsCollection.set(settings_1.PREFIX + name, message));
+getCommands();
 let DiscordApp = class DiscordApp {
     async basicCommands([{ content, channel }]) {
         const lowerCaseMessage = content.toLowerCase();
@@ -31,7 +39,7 @@ let DiscordApp = class DiscordApp {
             .join(", "));
     }
     memes({ channel }) {
-        channel.send(basicCommands_json_1.commands.map(({ name }) => settings_1.PREFIX + name).join(", "));
+        channel.send(commands.map(({ name }) => settings_1.PREFIX + name).join(", "));
     }
     notFoundA({ content, channel }) {
         if (hasCommand(content.toLowerCase()))

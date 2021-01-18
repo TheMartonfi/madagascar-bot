@@ -1,5 +1,16 @@
 import Sequelize from "sequelize";
 import { ENV, DB_URL, DB_RESET, RICO_TRIGGER } from "../settings";
+import { commands } from "../basicCommands.json";
+
+export interface Meme {
+	name: string;
+	message: string;
+}
+
+export interface WordCount {
+	word: string;
+	count: number;
+}
 
 const sequelize =
 	ENV === "development"
@@ -46,6 +57,13 @@ const syncSequelize = async () => {
 			word: RICO_TRIGGER,
 			count: 33
 		});
+
+		commands.forEach(({ name, message }) =>
+			Memes.create({
+				name,
+				message
+			})
+		);
 	}
 };
 

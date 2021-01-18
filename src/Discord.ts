@@ -12,9 +12,19 @@ import {
 import { Collection } from "discord.js";
 import { NotBot } from "./guards/NotBot";
 import { PREFIX } from "./settings";
-import { commands } from "./basicCommands.json";
+import { Memes, Meme } from "./db";
 
 const commandsCollection = new Collection();
+const commands: Meme[] = [];
+
+const getCommands = async (): Promise<void> => {
+	const memes = await Memes.findAll({ attributes: ["name"] });
+
+	memes.forEach(({ name, message }: Meme) => {
+		commandsCollection.set(PREFIX + name, message);
+		commands.push({ name, message });
+	});
+};
 
 const hasCommand = (message: string): boolean =>
 	commandsCollection.has(message);
@@ -22,9 +32,7 @@ const hasCommand = (message: string): boolean =>
 const getCommand = (message: string): string | unknown =>
 	commandsCollection.get(message);
 
-commands.forEach(({ name, message }) =>
-	commandsCollection.set(PREFIX + name, message)
-);
+getCommands();
 
 @Discord(PREFIX, {
 	import: [`${__dirname}/commands/*.js`, `${__dirname}/events/*.js`]
