@@ -42,7 +42,7 @@ const syncSequelize = async () => {
     if (settings_1.DB_RESET) {
         exports.WordCounts.create({
             word: settings_1.RICO_TRIGGER,
-            count: 0
+            count: 33
         });
     }
 };
