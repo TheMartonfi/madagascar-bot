@@ -12,7 +12,9 @@ export interface WordCount extends Model {
 	count: number;
 }
 
-const sequelize = new Sequelize(DB_URL);
+const sequelize = new Sequelize(DB_URL, {
+	logging: false
+});
 
 export const Memes = sequelize.define<Meme>("memes", {
 	name: {

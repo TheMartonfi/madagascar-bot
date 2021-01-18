@@ -4,7 +4,9 @@ exports.WordCounts = exports.Memes = void 0;
 const sequelize_1 = require("sequelize");
 const settings_1 = require("../settings");
 const memeCommands_json_1 = require("../memeCommands.json");
-const sequelize = new sequelize_1.Sequelize(settings_1.DB_URL);
+const sequelize = new sequelize_1.Sequelize(settings_1.DB_URL, {
+    logging: false
+});
 exports.Memes = sequelize.define("memes", {
     name: {
         type: sequelize_1.STRING,

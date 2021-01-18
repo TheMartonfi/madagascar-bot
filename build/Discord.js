@@ -9,7 +9,8 @@ const utils_1 = require("./utils");
 const index_1 = require("./index");
 const MemeCommandExists_1 = require("./guards/MemeCommandExists");
 let DiscordApp = class DiscordApp {
-    async memeCommands([{ content, channel }]) {
+    async memeCommands([{ content, channel, guild }]) {
+        console.log(guild.id);
         try {
             channel.send(index_1.memesCollection.get(content.toLowerCase()));
         }

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Count = void 0;
 const tslib_1 = require("tslib");
 const discord_1 = require("@typeit/discord");
+const OnlyGuild_1 = require("../guards/OnlyGuild");
 const db_1 = require("../db");
 const settings_1 = require("../settings");
 class Count {
@@ -15,6 +16,7 @@ class Count {
 }
 tslib_1.__decorate([
     discord_1.Command("count"),
+    discord_1.Guard(OnlyGuild_1.OnlyGuild(settings_1.MADAGASCAR_GUILD_ID)),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [discord_1.CommandMessage]),
     tslib_1.__metadata("design:returntype", Promise)

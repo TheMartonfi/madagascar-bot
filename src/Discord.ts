@@ -21,8 +21,9 @@ export abstract class DiscordApp {
 	@On("message")
 	@Guard(NotBot, MemeCommandExists)
 	private async memeCommands([
-		{ content, channel }
+		{ content, channel, guild }
 	]: ArgsOf<"commandMessage">): Promise<void> {
+		console.log(guild.id);
 		try {
 			channel.send(memesCollection.get(content.toLowerCase()));
 		} catch (e) {
