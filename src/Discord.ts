@@ -20,9 +20,9 @@ const commands: Meme[] = [];
 const getCommands = async (): Promise<void> => {
 	const memes = await Memes.findAll({ attributes: ["name", "message"] });
 
-	memes.forEach(({ name, message }: Meme) => {
-		commandsCollection.set(PREFIX + name, message);
-		commands.push({ name, message });
+	memes.forEach((meme) => {
+		commandsCollection.set(PREFIX + meme.name, meme.message);
+		commands.push(meme);
 	});
 };
 

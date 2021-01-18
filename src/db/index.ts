@@ -1,48 +1,46 @@
-import Sequelize from "sequelize";
+import { Sequelize, Model, STRING, TEXT, INTEGER } from "sequelize";
 import { ENV, DB_URL, DB_RESET, RICO_TRIGGER } from "../settings";
 import { commands } from "../basicCommands.json";
 
-export interface Meme {
+export interface Meme extends Model {
 	name: string;
 	message: string;
 }
 
-export interface WordCount {
+export interface WordCount extends Model {
 	word: string;
 	count: number;
 }
 
 const sequelize =
 	ENV === "development"
-		? // @ts-ignore
-		  new Sequelize("database", "user", "password", {
+		? new Sequelize("database", "user", "password", {
 				host: "localhost",
 				dialect: "sqlite",
 				logging: false,
 				storage: "database.sqlite"
 		  })
-		: // @ts-ignore
-		  new Sequelize(DB_URL);
+		: new Sequelize(DB_URL);
 
-export const Memes = sequelize.define("memes", {
+export const Memes = sequelize.define<Meme>("memes", {
 	name: {
-		type: Sequelize.STRING,
+		type: STRING,
 		unique: true,
 		allowNull: false
 	},
 	message: {
-		type: Sequelize.TEXT,
+		type: TEXT,
 		allowNull: false
 	}
 });
 
-export const WordCounts = sequelize.define("word_counts", {
+export const WordCounts = sequelize.define<WordCount>("word_counts", {
 	word: {
-		type: Sequelize.STRING,
+		type: STRING,
 		unique: true
 	},
 	count: {
-		type: Sequelize.INTEGER,
+		type: INTEGER,
 		defaultValue: 0,
 		allowNull: false
 	}

@@ -11,9 +11,9 @@ const commandsCollection = new discord_js_1.Collection();
 const commands = [];
 const getCommands = async () => {
     const memes = await db_1.Memes.findAll({ attributes: ["name", "message"] });
-    memes.forEach(({ name, message }) => {
-        commandsCollection.set(settings_1.PREFIX + name, message);
-        commands.push({ name, message });
+    memes.forEach((meme) => {
+        commandsCollection.set(settings_1.PREFIX + meme.name, meme.message);
+        commands.push(meme);
     });
 };
 const hasCommand = (message) => commandsCollection.has(message);

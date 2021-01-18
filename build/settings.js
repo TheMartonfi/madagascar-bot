@@ -6,7 +6,7 @@ const dotenv_1 = tslib_1.__importDefault(require("dotenv"));
 dotenv_1.default.config();
 exports.ENV = process.env.ENV;
 exports.DB_URL = process.env.DB_URL;
-exports.DB_RESET = process.env.DB_RESET || false;
+exports.DB_RESET = process.env.DB_RESET ? true : false;
 exports.PREFIX = process.env.PREFIX || "!";
 exports.BOT_TOKEN = process.env.BOT_TOKEN;
 exports.RICO_USER_ID = process.env.RICO_USER_ID;
