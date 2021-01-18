@@ -19,8 +19,7 @@ export abstract class VoiceKickUser {
 				where: { word: RICO_TRIGGER }
 			});
 
-			await wordCount.increment("count");
-			let count = await wordCount.get("count");
+			let { count } = await wordCount.increment("count");
 			count++;
 
 			if (count % 10 === 0)

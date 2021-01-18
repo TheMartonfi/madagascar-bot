@@ -10,11 +10,11 @@ const hasCommand = (name) => index_1.commandsCollection.has(name);
 const getCommand = (name) => index_1.commandsCollection.get(name);
 let DiscordApp = class DiscordApp {
     async basicCommands([{ content, channel }]) {
-        const lowerCaseMessage = content.toLowerCase();
-        if (!hasCommand(lowerCaseMessage))
+        const message = content.toLowerCase();
+        if (!hasCommand(message))
             return;
         try {
-            channel.send(getCommand(lowerCaseMessage));
+            channel.send(getCommand(message));
         }
         catch (e) {
             channel.send(`nah it brokey`);

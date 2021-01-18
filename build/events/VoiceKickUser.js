@@ -16,8 +16,7 @@ class VoiceKickUser {
             const wordCount = await db_1.WordCounts.findOne({
                 where: { word: settings_1.RICO_TRIGGER }
             });
-            await wordCount.increment("count");
-            let count = await wordCount.get("count");
+            let { count } = await wordCount.increment("count");
             count++;
             if (count % 10 === 0)
                 channel.send(`${wordCount.get("word")} count: ${count}`);

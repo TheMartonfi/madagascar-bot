@@ -25,11 +25,11 @@ export abstract class DiscordApp {
 	private async basicCommands([
 		{ content, channel }
 	]: ArgsOf<"commandMessage">): Promise<void> {
-		const lowerCaseMessage = content.toLowerCase();
-		if (!hasCommand(lowerCaseMessage)) return;
+		const message = content.toLowerCase();
+		if (!hasCommand(message)) return;
 
 		try {
-			channel.send(getCommand(lowerCaseMessage));
+			channel.send(getCommand(message));
 		} catch (e) {
 			channel.send(`nah it brokey`);
 			console.log(e);
