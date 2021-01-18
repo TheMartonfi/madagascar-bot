@@ -4,7 +4,7 @@ import { BOT_TOKEN, PREFIX } from "./settings";
 import { Memes, Meme } from "./db";
 
 export const commands: Meme[] = [];
-export const commandsCollection = new Collection();
+export const commandsCollection = new Collection<string, string>();
 
 const start = async () => {
 	const client = new Client({

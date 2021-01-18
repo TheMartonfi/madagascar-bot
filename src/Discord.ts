@@ -13,11 +13,8 @@ import { commands, commandsCollection } from "./index";
 import { NotBot } from "./guards/NotBot";
 import { PREFIX } from "./settings";
 
-const hasCommand = (message: string): boolean =>
-	commandsCollection.has(message);
-
-const getCommand = (message: string): string | unknown =>
-	commandsCollection.get(message);
+const hasCommand = (name: string): boolean => commandsCollection.has(name);
+const getCommand = (name: string): string => commandsCollection.get(name);
 
 @Discord(PREFIX, {
 	import: [`${__dirname}/commands/*.js`, `${__dirname}/events/*.js`]

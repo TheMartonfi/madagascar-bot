@@ -6,8 +6,8 @@ const discord_1 = require("@typeit/discord");
 const index_1 = require("./index");
 const NotBot_1 = require("./guards/NotBot");
 const settings_1 = require("./settings");
-const hasCommand = (message) => index_1.commandsCollection.has(message);
-const getCommand = (message) => index_1.commandsCollection.get(message);
+const hasCommand = (name) => index_1.commandsCollection.has(name);
+const getCommand = (name) => index_1.commandsCollection.get(name);
 let DiscordApp = class DiscordApp {
     async basicCommands([{ content, channel }]) {
         const lowerCaseMessage = content.toLowerCase();
