@@ -21,11 +21,8 @@ import { Logger } from "./guards/Logger";
 })
 export abstract class DiscordApp {
 	@On("message")
-	@Guard(Logger)
-	private async logger([command]: ArgsOf<"commandMessage">) {
-		// const attachmentUrl = command.attachments.first().url;
-		// console.log(attachmentUrl);
-	}
+	// @Guard(Logger)
+	private async logger([command]: ArgsOf<"commandMessage">): Promise<void> {}
 
 	@On("message")
 	@Guard(NotBot, MemeCommandExists)

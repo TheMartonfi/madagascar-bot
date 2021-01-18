@@ -9,12 +9,8 @@ const index_1 = require("./index");
 const utils_1 = require("./utils");
 const NotBot_1 = require("./guards/NotBot");
 const MemeCommandExists_1 = require("./guards/MemeCommandExists");
-const Logger_1 = require("./guards/Logger");
 let DiscordApp = class DiscordApp {
-    async logger([command]) {
-        // const attachmentUrl = command.attachments.first().url;
-        // console.log(attachmentUrl);
-    }
+    async logger([command]) { }
     async memeCommands([{ content, channel, guild }]) {
         console.log(guild.id);
         try {
@@ -38,7 +34,6 @@ let DiscordApp = class DiscordApp {
 };
 tslib_1.__decorate([
     discord_1.On("message"),
-    discord_1.Guard(Logger_1.Logger),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [Object]),
     tslib_1.__metadata("design:returntype", Promise)
