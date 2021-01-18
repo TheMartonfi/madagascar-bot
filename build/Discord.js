@@ -3,16 +3,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DiscordApp = void 0;
 const tslib_1 = require("tslib");
 const discord_1 = require("@typeit/discord");
-const NotBot_1 = require("./guards/NotBot");
+const discord_js_1 = require("discord.js");
 const settings_1 = require("./settings");
-const utils_1 = require("./utils");
 const index_1 = require("./index");
+const utils_1 = require("./utils");
+const NotBot_1 = require("./guards/NotBot");
 const MemeCommandExists_1 = require("./guards/MemeCommandExists");
+const Logger_1 = require("./guards/Logger");
 let DiscordApp = class DiscordApp {
+    async logger([command]) {
+        // const attachmentUrl = command.attachments.first().url;
+        // console.log(attachmentUrl);
+    }
     async memeCommands([{ content, channel, guild }]) {
         console.log(guild.id);
         try {
-            channel.send(index_1.memesCollection.get(content.toLowerCase()));
+            const attachment = new discord_js_1.MessageAttachment(index_1.memesCollection.get(content.toLowerCase()));
+            channel.send(attachment);
         }
         catch (e) {
             channel.send(`nah it brokey`);
@@ -29,6 +36,13 @@ let DiscordApp = class DiscordApp {
         channel.send(utils_1.getMemeNames().join(", "));
     }
 };
+tslib_1.__decorate([
+    discord_1.On("message"),
+    discord_1.Guard(Logger_1.Logger),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:returntype", Promise)
+], DiscordApp.prototype, "logger", null);
 tslib_1.__decorate([
     discord_1.On("message"),
     discord_1.Guard(NotBot_1.NotBot, MemeCommandExists_1.MemeCommandExists),

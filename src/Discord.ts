@@ -8,16 +8,25 @@ import {
 	Guard,
 	ArgsOf
 } from "@typeit/discord";
-import { NotBot } from "./guards/NotBot";
+import { MessageAttachment } from "discord.js";
 import { PREFIX } from "./settings";
-import { getMemeNames } from "./utils";
 import { memesCollection } from "./index";
+import { getMemeNames } from "./utils";
+import { NotBot } from "./guards/NotBot";
 import { MemeCommandExists } from "./guards/MemeCommandExists";
+import { Logger } from "./guards/Logger";
 
 @Discord(PREFIX, {
 	import: [`${__dirname}/commands/*.js`, `${__dirname}/events/*.js`]
 })
 export abstract class DiscordApp {
+	@On("message")
+	@Guard(Logger)
+	private async logger([command]: ArgsOf<"commandMessage">) {
+		// const attachmentUrl = command.attachments.first().url;
+		// console.log(attachmentUrl);
+	}
+
 	@On("message")
 	@Guard(NotBot, MemeCommandExists)
 	private async memeCommands([
@@ -25,7 +34,11 @@ export abstract class DiscordApp {
 	]: ArgsOf<"commandMessage">): Promise<void> {
 		console.log(guild.id);
 		try {
-			channel.send(memesCollection.get(content.toLowerCase()));
+			const attachment = new MessageAttachment(
+				memesCollection.get(content.toLowerCase())
+			);
+
+			channel.send(attachment);
 		} catch (e) {
 			channel.send(`nah it brokey`);
 			console.log(e);

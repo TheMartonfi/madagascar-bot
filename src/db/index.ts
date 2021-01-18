@@ -31,7 +31,8 @@ export const Memes = sequelize.define<Meme>("memes", {
 export const WordCounts = sequelize.define<WordCount>("word_counts", {
 	word: {
 		type: STRING,
-		unique: true
+		unique: true,
+		allowNull: false
 	},
 	count: {
 		type: INTEGER,
