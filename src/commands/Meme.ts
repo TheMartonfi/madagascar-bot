@@ -1,11 +1,13 @@
 import { Command, CommandMessage } from "@typeit/discord";
 import { Message, MessageAttachment } from "discord.js";
+import { PREFIX } from "../settings";
 import { memesCollection } from "../index";
 import { getMemeNames } from "../utils";
+import { Memes } from "../db";
 
 export abstract class Meme {
 	@Command("meme search :word")
-	private memeCommandsSearch({
+	private memeSearch({
 		channel,
 		args: { word }
 	}: CommandMessage): Promise<Message> {
@@ -23,6 +25,22 @@ export abstract class Meme {
 			: channel.send("Meme not found");
 	}
 
-	// const attachmentUrl = command.attachments.first().url;
-	// console.log(attachmentUrl);
+	@Command("meme add :name")
+	private async memeAdd({
+		channel,
+		attachments,
+		args: { name }
+	}: CommandMessage): Promise<Message> {
+		const message = attachments.first()?.url;
+
+		if (message) {
+			if (name[0] === PREFIX) name = name.slice(1);
+			name = name.toLowerCase();
+
+			const meme = await Memes.create({ name, message });
+			return channel.send(`${meme.name} successfully added`);
+		}
+
+		return channel.send("Please provide a meme");
+	}
 }
