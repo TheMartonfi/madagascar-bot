@@ -1,6 +1,6 @@
 import { Sequelize, Model, STRING, TEXT, INTEGER } from "sequelize";
 import { ENV, DB_RESET, RICO_TRIGGER } from "../settings";
-import { commands } from "../basicCommands.json";
+import { memeCommands } from "../memeCommands.json";
 
 export interface Meme extends Model {
 	name: string;
@@ -53,7 +53,7 @@ const syncSequelize = async () => {
 			count: 33
 		});
 
-		commands.forEach(({ name, message }) =>
+		memeCommands.forEach(({ name, message }) =>
 			Memes.create({
 				name,
 				message

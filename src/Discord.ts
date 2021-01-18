@@ -4,32 +4,27 @@ import {
 	CommandInfos,
 	Command,
 	CommandMessage,
-	CommandNotFound,
 	On,
 	Guard,
 	ArgsOf
 } from "@typeit/discord";
-import { commands, commandsCollection } from "./index";
 import { NotBot } from "./guards/NotBot";
 import { PREFIX } from "./settings";
-
-const hasCommand = (name: string): boolean => commandsCollection.has(name);
-const getCommand = (name: string): string => commandsCollection.get(name);
+import { getMemeNames } from "./utils";
+import { memesCollection } from "./index";
+import { MemeCommandExists } from "./guards/MemeCommandExists";
 
 @Discord(PREFIX, {
 	import: [`${__dirname}/commands/*.js`, `${__dirname}/events/*.js`]
 })
 export abstract class DiscordApp {
 	@On("message")
-	@Guard(NotBot)
-	private async basicCommands([
+	@Guard(NotBot, MemeCommandExists)
+	private async memeCommands([
 		{ content, channel }
 	]: ArgsOf<"commandMessage">): Promise<void> {
-		const message = content.toLowerCase();
-		if (!hasCommand(message)) return;
-
 		try {
-			channel.send(getCommand(message));
+			channel.send(memesCollection.get(content.toLowerCase()));
 		} catch (e) {
 			channel.send(`nah it brokey`);
 			console.log(e);
@@ -48,12 +43,6 @@ export abstract class DiscordApp {
 
 	@Command("memes")
 	private memes({ channel }: CommandMessage): void {
-		channel.send(commands.map(({ name }) => PREFIX + name).join(", "));
-	}
-
-	@CommandNotFound()
-	private notFoundA({ content, channel }: CommandMessage): void {
-		if (hasCommand(content.toLowerCase())) return;
-		channel.send("Command not found");
+		channel.send(getMemeNames().join(", "));
 	}
 }

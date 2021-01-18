@@ -3,15 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Meme = void 0;
 const tslib_1 = require("tslib");
 const discord_1 = require("@typeit/discord");
-const basicCommands_json_1 = require("../basicCommands.json");
-const settings_1 = require("../settings");
+const utils_1 = require("../utils");
 class Meme {
     basicCommandsSearch({ channel, args: { search } }) {
         const results = [];
-        basicCommands_json_1.commands.forEach(({ name }) => {
+        utils_1.getMemeNames().forEach((name) => {
             if (name.search(String(search).toLowerCase()) === -1)
                 return;
-            results.push(settings_1.PREFIX + name);
+            results.push(name);
         });
         return results.length
             ? channel.send(`Found ${results.length}: ${results.join(", ")}`)

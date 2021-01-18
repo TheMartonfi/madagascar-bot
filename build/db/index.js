@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WordCounts = exports.Memes = void 0;
 const sequelize_1 = require("sequelize");
 const settings_1 = require("../settings");
-const basicCommands_json_1 = require("../basicCommands.json");
+const memeCommands_json_1 = require("../memeCommands.json");
 const sequelize = new sequelize_1.Sequelize("database", "user", "password", {
     host: "localhost",
     dialect: "sqlite",
@@ -40,7 +40,7 @@ const syncSequelize = async () => {
             word: settings_1.RICO_TRIGGER,
             count: 33
         });
-        basicCommands_json_1.commands.forEach(({ name, message }) => exports.Memes.create({
+        memeCommands_json_1.memeCommands.forEach(({ name, message }) => exports.Memes.create({
             name,
             message
         }));

@@ -1,7 +1,6 @@
 import { Command, CommandMessage } from "@typeit/discord";
 import { Message } from "discord.js";
-import { commands } from "../basicCommands.json";
-import { PREFIX } from "../settings";
+import { getMemeNames } from "../utils";
 
 export abstract class Meme {
 	@Command("meme :search")
@@ -10,9 +9,10 @@ export abstract class Meme {
 		args: { search }
 	}: CommandMessage): Promise<Message> {
 		const results: string[] = [];
-		commands.forEach(({ name }) => {
+
+		getMemeNames().forEach((name) => {
 			if (name.search(String(search).toLowerCase()) === -1) return;
-			results.push(PREFIX + name);
+			results.push(name);
 		});
 
 		return results.length
