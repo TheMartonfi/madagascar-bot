@@ -5,6 +5,7 @@ const tslib_1 = require("tslib");
 const discord_1 = require("@typeit/discord");
 const discord_js_1 = require("discord.js");
 const settings_1 = require("../settings");
+const OnlyGuild_1 = require("../guards/OnlyGuild");
 const index_1 = require("../index");
 const utils_1 = require("../utils");
 const db_1 = require("../db");
@@ -25,12 +26,32 @@ class Meme {
     async memeAdd({ channel, attachments, args: { name } }) {
         var _a;
         const message = (_a = attachments.first()) === null || _a === void 0 ? void 0 : _a.url;
+        // add check for name
         if (message) {
             if (name[0] === settings_1.PREFIX)
-                name = name.slice(1);
-            name = name.toLowerCase();
+                name = name.slice(1).toLowerCase();
             const meme = await db_1.Memes.create({ name, message });
             return channel.send(`${meme.name} successfully added`);
+        }
+        return channel.send("Please provide a meme");
+    }
+    async memeEdit({ channel, attachments, args: { id, name } }) {
+        var _a;
+        const message = (_a = attachments.first()) === null || _a === void 0 ? void 0 : _a.url;
+        if (message) {
+            // Create formatCommandName function that lower cases and removes prefix if present
+            if (id[0] === settings_1.PREFIX)
+                id = id.slice(1).toLowerCase();
+            if (name[0] === settings_1.PREFIX)
+                name = name.slice(1).toLowerCase();
+            try {
+                await db_1.Memes.update({ name, message }, { where: { name: id } });
+            }
+            catch (e) {
+                console.log(e);
+                return channel.send(`There was an error updating ${id}`);
+            }
+            return channel.send(`Successfully updated ${name}`);
         }
         return channel.send("Please provide a meme");
     }
@@ -43,9 +64,17 @@ tslib_1.__decorate([
 ], Meme.prototype, "memeSearch", null);
 tslib_1.__decorate([
     discord_1.Command("meme add :name"),
+    discord_1.Guard(OnlyGuild_1.OnlyGuild(settings_1.MADAGASCAR_GUILD_ID)),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [discord_1.CommandMessage]),
     tslib_1.__metadata("design:returntype", Promise)
 ], Meme.prototype, "memeAdd", null);
+tslib_1.__decorate([
+    discord_1.Command("meme edit :id :name"),
+    discord_1.Guard(OnlyGuild_1.OnlyGuild(settings_1.MADAGASCAR_GUILD_ID)),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [discord_1.CommandMessage]),
+    tslib_1.__metadata("design:returntype", Promise)
+], Meme.prototype, "memeEdit", null);
 exports.Meme = Meme;
 //# sourceMappingURL=Meme.js.map
