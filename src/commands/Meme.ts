@@ -1,69 +1,91 @@
 import { Command, CommandMessage, Guard } from "@typeit/discord";
 import { Message, MessageAttachment } from "discord.js";
-import { PREFIX, MADAGASCAR_GUILD_ID } from "../settings";
+import { MADAGASCAR_GUILD_ID } from "../settings";
 import { OnlyGuild } from "../guards/OnlyGuild";
 import { memesCollection } from "../index";
 import { getMemeNames, formatCommandName } from "../utils";
 import { Memes } from "../db";
 
 export abstract class Meme {
-	@Command("meme search :word")
-	private memeSearch({
+	@Command("search meme :word")
+	private searchMeme({
 		channel,
 		args: { word }
 	}: CommandMessage): Promise<Message> {
 		const results: string[] = [];
 
 		getMemeNames().forEach((name) => {
-			if (name.search(String(word).toLowerCase()) === -1) return;
+			if (name.search(formatCommandName(word)) === -1) return;
 			results.push(name);
 		});
 
+		// Use new function to send message attachment
 		return results.length
 			? results.length === 1
 				? channel.send(new MessageAttachment(memesCollection.get(results[0])))
-				: channel.send(`Found ${results.length} memes: ${results.join(", ")}`)
-			: channel.send("Meme not found");
+				: channel.send(`Found ${results.length} memes: ${results.join(", ")}.`)
+			: channel.send("Meme not found.");
 	}
 
-	@Command("meme add :name")
+	@Command("add meme :name")
 	@Guard(OnlyGuild(MADAGASCAR_GUILD_ID))
-	private async memeAdd({
+	private async addMeme({
 		channel,
 		attachments,
 		args: { name }
 	}: CommandMessage): Promise<void> {
+		const formattedName = formatCommandName(name);
 		const message = attachments.first()?.url;
 
-		// add check for name
-		// use try catch here?
-		if (message) {
-			if (name[0] === PREFIX) name = name.slice(1).toLowerCase();
-
-			const meme = await Memes.create({ name, message });
-			channel.send(`${meme.name} successfully added`);
+		try {
+			const meme = await Memes.create({ name: formattedName, message });
+			channel.send(`Meme ${meme.name} successfully added.`);
+		} catch (e) {
+			if (e.name === "SequelizeUniqueConstraintError") {
+				channel.send("That meme already exists.");
+			} else {
+				channel.send(`There was an error adding ${formattedName}.`);
+				console.log(e);
+			}
 		}
-
-		channel.send("Please provide a meme");
 	}
 
-	@Command("meme edit :id :name")
+	@Command("edit meme :id :name")
 	@Guard(OnlyGuild(MADAGASCAR_GUILD_ID))
-	private async memeEdit({
+	private async editMeme({
 		channel,
 		args: { id, name }
 	}: CommandMessage): Promise<void> {
-		// Create formatCommandName function that lower cases and removes prefix if present
-		if (id[0] === PREFIX) id = id.slice(1).toLowerCase();
-		if (name[0] === PREFIX) name = name.slice(1).toLowerCase();
+		const formattedId = formatCommandName(id);
+		const formattedName = formatCommandName(name);
 
 		try {
-			await Memes.update({ name }, { where: { name: id } });
-			channel.send(`Successfully updated ${name}`);
+			await Memes.update(
+				{ name: formattedName },
+				{ where: { name: formattedId } }
+			);
+			channel.send(`Successfully updated ${formattedName}.`);
 		} catch (e) {
-			// Check for sequelize unique error
-			channel.send(`There was an error updating ${id}`);
-			console.log(e);
+			if (e.name === "SequelizeUniqueConstraintError") {
+				channel.send("That meme already exists.");
+			} else {
+				channel.send(`There was an error updating ${formattedId}.`);
+				console.log(e);
+			}
 		}
+	}
+
+	@Command("delete meme :name")
+	@Guard(OnlyGuild(MADAGASCAR_GUILD_ID))
+	private async deleteMeme({
+		channel,
+		args: { name }
+	}: CommandMessage): Promise<Message> {
+		const formattedName = formatCommandName(name);
+
+		const rowCount = await Memes.destroy({ where: { name: formattedName } });
+		if (!rowCount) return channel.send("That meme didn't exist.");
+
+		return channel.send(`Meme ${formattedName} succesfully deleted.`);
 	}
 }

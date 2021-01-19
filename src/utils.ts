@@ -10,8 +10,10 @@ export const getMemeNames = (): string[] => {
 	return memeNames;
 };
 
+// Make getMemeByName function
+
 export const formatCommandName = (name: string): string => {
 	if (name[0] === PREFIX) name = name.slice(1);
 
-	return name.toLowerCase();
+	return String(name).toLowerCase();
 };

@@ -11,10 +11,11 @@ const getMemeNames = () => {
     return memeNames;
 };
 exports.getMemeNames = getMemeNames;
+// Make getMemeByName function
 const formatCommandName = (name) => {
     if (name[0] === settings_1.PREFIX)
         name = name.slice(1);
-    return name.toLowerCase();
+    return String(name).toLowerCase();
 };
 exports.formatCommandName = formatCommandName;
 //# sourceMappingURL=utils.js.map

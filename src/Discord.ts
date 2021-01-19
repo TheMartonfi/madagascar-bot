@@ -11,7 +11,7 @@ import {
 import { MessageAttachment } from "discord.js";
 import { PREFIX } from "./settings";
 import { memesCollection } from "./index";
-import { getMemeNames, formatCommandName } from "./utils";
+import { getMemeNames } from "./utils";
 import { NotBot } from "./guards/NotBot";
 import { MemeCommandExists } from "./guards/MemeCommandExists";
 import { Logger } from "./guards/Logger";
@@ -30,11 +30,12 @@ export abstract class DiscordApp {
 		{ content, channel }
 	]: ArgsOf<"commandMessage">): Promise<void> {
 		try {
-			const formattedCommandName = formatCommandName(content);
+			const formattedCommandName = content.toLowerCase();
 			const attachment = new MessageAttachment(
 				memesCollection.get(formattedCommandName)
 			);
 
+			// Extract this logic into a function that returns the message to send
 			if (typeof attachment.attachment === "string") {
 				if (attachment.attachment.search("discordapp") !== -1) {
 					channel.send(attachment);
@@ -43,7 +44,7 @@ export abstract class DiscordApp {
 				}
 			}
 		} catch (e) {
-			channel.send(`Something went wrong`);
+			channel.send(`Something went wrong.`);
 			console.log(e);
 		}
 	}

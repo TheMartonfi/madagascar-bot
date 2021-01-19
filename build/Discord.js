@@ -13,8 +13,9 @@ let DiscordApp = class DiscordApp {
     async logger([command]) { }
     async memeCommands([{ content, channel }]) {
         try {
-            const formattedCommandName = utils_1.formatCommandName(content);
+            const formattedCommandName = content.toLowerCase();
             const attachment = new discord_js_1.MessageAttachment(index_1.memesCollection.get(formattedCommandName));
+            // Extract this logic into a function that returns the message to send
             if (typeof attachment.attachment === "string") {
                 if (attachment.attachment.search("discordapp") !== -1) {
                     channel.send(attachment);
@@ -25,7 +26,7 @@ let DiscordApp = class DiscordApp {
             }
         }
         catch (e) {
-            channel.send(`Something went wrong`);
+            channel.send(`Something went wrong.`);
             console.log(e);
         }
     }
