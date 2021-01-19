@@ -25,7 +25,6 @@ export abstract class VoiceKickUser {
 			if (count % 10 === 0)
 				channel.send(`${wordCount.get("word")} count: ${count}`);
 		} catch (e) {
-			channel.send("nah it brokey");
 			console.log(e);
 		}
 	}

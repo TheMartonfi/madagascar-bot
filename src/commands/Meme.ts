@@ -3,7 +3,7 @@ import { Message, MessageAttachment } from "discord.js";
 import { PREFIX, MADAGASCAR_GUILD_ID } from "../settings";
 import { OnlyGuild } from "../guards/OnlyGuild";
 import { memesCollection } from "../index";
-import { getMemeNames } from "../utils";
+import { getMemeNames, formatCommandName } from "../utils";
 import { Memes } from "../db";
 
 export abstract class Meme {
@@ -32,44 +32,38 @@ export abstract class Meme {
 		channel,
 		attachments,
 		args: { name }
-	}: CommandMessage): Promise<Message> {
+	}: CommandMessage): Promise<void> {
 		const message = attachments.first()?.url;
 
 		// add check for name
+		// use try catch here?
 		if (message) {
 			if (name[0] === PREFIX) name = name.slice(1).toLowerCase();
 
 			const meme = await Memes.create({ name, message });
-			return channel.send(`${meme.name} successfully added`);
+			channel.send(`${meme.name} successfully added`);
 		}
 
-		return channel.send("Please provide a meme");
+		channel.send("Please provide a meme");
 	}
 
 	@Command("meme edit :id :name")
 	@Guard(OnlyGuild(MADAGASCAR_GUILD_ID))
 	private async memeEdit({
 		channel,
-		attachments,
 		args: { id, name }
-	}: CommandMessage): Promise<Message> {
-		const message = attachments.first()?.url;
+	}: CommandMessage): Promise<void> {
+		// Create formatCommandName function that lower cases and removes prefix if present
+		if (id[0] === PREFIX) id = id.slice(1).toLowerCase();
+		if (name[0] === PREFIX) name = name.slice(1).toLowerCase();
 
-		if (message) {
-			// Create formatCommandName function that lower cases and removes prefix if present
-			if (id[0] === PREFIX) id = id.slice(1).toLowerCase();
-			if (name[0] === PREFIX) name = name.slice(1).toLowerCase();
-
-			try {
-				await Memes.update({ name, message }, { where: { name: id } });
-			} catch (e) {
-				console.log(e);
-				return channel.send(`There was an error updating ${id}`);
-			}
-
-			return channel.send(`Successfully updated ${name}`);
+		try {
+			await Memes.update({ name }, { where: { name: id } });
+			channel.send(`Successfully updated ${name}`);
+		} catch (e) {
+			// Check for sequelize unique error
+			channel.send(`There was an error updating ${id}`);
+			console.log(e);
 		}
-
-		return channel.send("Please provide a meme");
 	}
 }

@@ -22,7 +22,6 @@ class VoiceKickUser {
                 channel.send(`${wordCount.get("word")} count: ${count}`);
         }
         catch (e) {
-            channel.send("nah it brokey");
             console.log(e);
         }
     }

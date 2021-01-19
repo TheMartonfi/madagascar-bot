@@ -27,33 +27,30 @@ class Meme {
         var _a;
         const message = (_a = attachments.first()) === null || _a === void 0 ? void 0 : _a.url;
         // add check for name
+        // use try catch here?
         if (message) {
             if (name[0] === settings_1.PREFIX)
                 name = name.slice(1).toLowerCase();
             const meme = await db_1.Memes.create({ name, message });
-            return channel.send(`${meme.name} successfully added`);
+            channel.send(`${meme.name} successfully added`);
         }
-        return channel.send("Please provide a meme");
+        channel.send("Please provide a meme");
     }
-    async memeEdit({ channel, attachments, args: { id, name } }) {
-        var _a;
-        const message = (_a = attachments.first()) === null || _a === void 0 ? void 0 : _a.url;
-        if (message) {
-            // Create formatCommandName function that lower cases and removes prefix if present
-            if (id[0] === settings_1.PREFIX)
-                id = id.slice(1).toLowerCase();
-            if (name[0] === settings_1.PREFIX)
-                name = name.slice(1).toLowerCase();
-            try {
-                await db_1.Memes.update({ name, message }, { where: { name: id } });
-            }
-            catch (e) {
-                console.log(e);
-                return channel.send(`There was an error updating ${id}`);
-            }
-            return channel.send(`Successfully updated ${name}`);
+    async memeEdit({ channel, args: { id, name } }) {
+        // Create formatCommandName function that lower cases and removes prefix if present
+        if (id[0] === settings_1.PREFIX)
+            id = id.slice(1).toLowerCase();
+        if (name[0] === settings_1.PREFIX)
+            name = name.slice(1).toLowerCase();
+        try {
+            await db_1.Memes.update({ name }, { where: { name: id } });
+            channel.send(`Successfully updated ${name}`);
         }
-        return channel.send("Please provide a meme");
+        catch (e) {
+            // Check for sequelize unique error
+            channel.send(`There was an error updating ${id}`);
+            console.log(e);
+        }
     }
 }
 tslib_1.__decorate([

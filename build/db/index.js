@@ -42,6 +42,7 @@ const syncSequelize = async () => {
             name,
             message
         }));
+        // process.exit();
     }
 };
 syncSequelize();

@@ -11,14 +11,21 @@ const NotBot_1 = require("./guards/NotBot");
 const MemeCommandExists_1 = require("./guards/MemeCommandExists");
 let DiscordApp = class DiscordApp {
     async logger([command]) { }
-    async memeCommands([{ content, channel, guild }]) {
-        console.log(guild.id);
+    async memeCommands([{ content, channel }]) {
         try {
-            const attachment = new discord_js_1.MessageAttachment(index_1.memesCollection.get(content.toLowerCase()));
-            channel.send(attachment);
+            const formattedCommandName = utils_1.formatCommandName(content);
+            const attachment = new discord_js_1.MessageAttachment(index_1.memesCollection.get(formattedCommandName));
+            if (typeof attachment.attachment === "string") {
+                if (attachment.attachment.search("discordapp") !== -1) {
+                    channel.send(attachment);
+                }
+                else {
+                    channel.send(index_1.memesCollection.get(formattedCommandName));
+                }
+            }
         }
         catch (e) {
-            channel.send(`nah it brokey`);
+            channel.send(`Something went wrong`);
             console.log(e);
         }
     }
