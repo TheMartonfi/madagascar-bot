@@ -31,6 +31,10 @@ class Meme {
     async addMeme({ channel, attachments, args: { name, file } }) {
         var _a;
         const formattedName = utils_1.formatCommandName(name);
+        for (const { commandName } of discord_1.Client.getCommands()) {
+            if (commandName === formattedName)
+                return channel.send("Meme name cannot be a command name.");
+        }
         const attachmentUrl = (_a = attachments.first()) === null || _a === void 0 ? void 0 : _a.url;
         const message = attachmentUrl ? attachmentUrl : file;
         try {

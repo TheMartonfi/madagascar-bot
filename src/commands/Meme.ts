@@ -1,4 +1,10 @@
-import { Command, CommandMessage, Guard } from "@typeit/discord";
+import {
+	Client,
+	CommandInfos,
+	Command,
+	CommandMessage,
+	Guard
+} from "@typeit/discord";
 import { Message } from "discord.js";
 import { Memes } from "../db";
 import { MADAGASCAR_GUILD_ID } from "../settings";
@@ -40,8 +46,14 @@ export abstract class Meme {
 		channel,
 		attachments,
 		args: { name, file }
-	}: CommandMessage): Promise<void> {
+	}: CommandMessage): Promise<Message> {
 		const formattedName = formatCommandName(name);
+
+		for (const { commandName } of Client.getCommands()) {
+			if (commandName === formattedName)
+				return channel.send("Meme name cannot be a command name.");
+		}
+
 		const attachmentUrl = attachments.first()?.url;
 		const message = attachmentUrl ? attachmentUrl : file;
 
