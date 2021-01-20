@@ -33,7 +33,7 @@ let DiscordApp = class DiscordApp {
             if (typeof commandName === "string") {
                 commandName
                     .split(":")
-                    .forEach((word, index) => commandNameWords.push(index === 0 ? word : `[${word}]`));
+                    .forEach((word, index) => commandNameWords.push(index === 0 ? word : `[${word.trim()}]`));
             }
             return settings_1.PREFIX + commandNameWords.join("");
         })

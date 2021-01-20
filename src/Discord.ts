@@ -58,7 +58,7 @@ export abstract class DiscordApp {
 						commandName
 							.split(":")
 							.forEach((word, index) =>
-								commandNameWords.push(index === 0 ? word : `[${word}]`)
+								commandNameWords.push(index === 0 ? word : `[${word.trim()}]`)
 							);
 					}
 
