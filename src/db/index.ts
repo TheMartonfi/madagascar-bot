@@ -1,6 +1,6 @@
 import { Sequelize, Model, STRING, TEXT, INTEGER } from "sequelize";
-import { DB_URL, DB_RESET, RICO_TRIGGER } from "../settings";
-import { memeCommands } from "../memeCommands.json";
+import { DB_URL, DB_MIGRATE, DB_SEED, RICO_TRIGGER } from "../settings";
+import { memeCommands } from "../memes.json";
 
 export interface Meme extends Model {
 	name: string;
@@ -42,10 +42,10 @@ export const WordCounts = sequelize.define<WordCount>("word_counts", {
 });
 
 const syncSequelize = async () => {
-	await Memes.sync({ force: DB_RESET });
-	await WordCounts.sync({ force: DB_RESET });
+	await Memes.sync({ force: DB_MIGRATE });
+	await WordCounts.sync({ force: DB_MIGRATE });
 
-	if (DB_RESET) {
+	if (DB_SEED) {
 		WordCounts.create({
 			word: RICO_TRIGGER,
 			count: 33
@@ -57,8 +57,6 @@ const syncSequelize = async () => {
 				message
 			})
 		);
-
-		// process.exit();
 	}
 };
 

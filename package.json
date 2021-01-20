@@ -7,9 +7,11 @@
 	"license": "MIT",
 	"scripts": {
 		"tsc:w": "tsc -w",
+		"start": "node build/index.js",
 		"start:dev": "concurrently \"yarn tsc:w\" \"nodemon build/index.js\"",
-		"db:reset": "DB_RESET=true concurrently \"yarn tsc:w\" \"nodemon build/index.js\"",
-		"start": "node build/index.js"
+		"db:migrate": "DB_MIGRATE=true node build/index.js",
+		"db:seed": "DB_SEED=true node build/index.js",
+		"db:reset": "DB_MIGRATE=true DB_SEED=true node build/index.js"
 	},
 	"dependencies": {
 		"@typeit/discord": "^4.0.8",

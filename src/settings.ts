@@ -2,9 +2,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const PREFIX = process.env.PREFIX || "!";
-// DB_MIGRATE
-// DB_SEED
-export const DB_RESET = process.env.DB_RESET ? true : false;
+export const DB_MIGRATE = process.env.DB_MIGRATE ? true : false;
+export const DB_SEED = process.env.DB_SEED ? true : false;
 
 export const { ENV } = process.env;
 export const { DB_URL } = process.env;
