@@ -10,24 +10,24 @@ import {
 } from "../utils";
 
 export abstract class Meme {
-	@Command("search meme :word")
+	@Command("search meme :name")
 	private async searchMeme({
 		channel,
-		args: { word }
+		args: { name }
 	}: CommandMessage): Promise<void> {
 		const results: string[] = [];
-		const formattedWord = formatCommandName(word);
+		const formattedName = formatCommandName(name);
 
 		const memeNames = await getMemeNames();
 		memeNames.forEach((name) => {
-			if (name.search(formattedWord) === -1) return;
+			if (name.search(formattedName) === -1) return;
 			results.push(name);
 		});
 
 		if (results.length > 1) {
 			channel.send(`Found ${results.length} memes: ${results.join(", ")}`);
 		} else if (results.length === 1) {
-			const meme = await Memes.findOne({ where: { name: formattedWord } });
+			const meme = await Memes.findOne({ where: { name: formattedName } });
 			channel.send(makeMessageAttachment(meme.message));
 		} else {
 			channel.send("Meme not found.");
@@ -57,26 +57,28 @@ export abstract class Meme {
 		}
 	}
 
-	@Command("edit meme :id :name")
+	@Command("edit meme :oldName :newName")
 	@Guard(OnlyGuild(MADAGASCAR_GUILD_ID))
 	private async editMeme({
 		channel,
-		args: { id, name }
+		args: { oldName, newName }
 	}: CommandMessage): Promise<void> {
-		const formattedId = formatCommandName(id);
-		const formattedName = formatCommandName(name);
+		const formattedOldName = formatCommandName(oldName);
+		const formattedNewName = formatCommandName(newName);
 
 		try {
 			await Memes.update(
-				{ name: formattedName },
-				{ where: { name: formattedId } }
+				{ name: formattedNewName },
+				{ where: { name: formattedOldName } }
 			);
-			channel.send(`Successfully updated ${formattedName}.`);
+			channel.send(
+				`Successfully updated ${formattedOldName} to ${formattedNewName}.`
+			);
 		} catch (e) {
 			if (e.name === "SequelizeUniqueConstraintError") {
 				channel.send("That meme already exists.");
 			} else {
-				channel.send(`There was an error updating ${formattedId}.`);
+				channel.send(`There was an error updating ${formattedOldName}.`);
 				console.log(e);
 			}
 		}

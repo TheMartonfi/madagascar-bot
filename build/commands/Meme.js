@@ -8,12 +8,12 @@ const settings_1 = require("../settings");
 const OnlyGuild_1 = require("../guards/OnlyGuild");
 const utils_1 = require("../utils");
 class Meme {
-    async searchMeme({ channel, args: { word } }) {
+    async searchMeme({ channel, args: { name } }) {
         const results = [];
-        const formattedWord = utils_1.formatCommandName(word);
+        const formattedName = utils_1.formatCommandName(name);
         const memeNames = await utils_1.getMemeNames();
         memeNames.forEach((name) => {
-            if (name.search(formattedWord) === -1)
+            if (name.search(formattedName) === -1)
                 return;
             results.push(name);
         });
@@ -21,7 +21,7 @@ class Meme {
             channel.send(`Found ${results.length} memes: ${results.join(", ")}`);
         }
         else if (results.length === 1) {
-            const meme = await db_1.Memes.findOne({ where: { name: formattedWord } });
+            const meme = await db_1.Memes.findOne({ where: { name: formattedName } });
             channel.send(utils_1.makeMessageAttachment(meme.message));
         }
         else {
@@ -46,19 +46,19 @@ class Meme {
             }
         }
     }
-    async editMeme({ channel, args: { id, name } }) {
-        const formattedId = utils_1.formatCommandName(id);
-        const formattedName = utils_1.formatCommandName(name);
+    async editMeme({ channel, args: { oldName, newName } }) {
+        const formattedOldName = utils_1.formatCommandName(oldName);
+        const formattedNewName = utils_1.formatCommandName(newName);
         try {
-            await db_1.Memes.update({ name: formattedName }, { where: { name: formattedId } });
-            channel.send(`Successfully updated ${formattedName}.`);
+            await db_1.Memes.update({ name: formattedNewName }, { where: { name: formattedOldName } });
+            channel.send(`Successfully updated ${formattedOldName} to ${formattedNewName}.`);
         }
         catch (e) {
             if (e.name === "SequelizeUniqueConstraintError") {
                 channel.send("That meme already exists.");
             }
             else {
-                channel.send(`There was an error updating ${formattedId}.`);
+                channel.send(`There was an error updating ${formattedOldName}.`);
                 console.log(e);
             }
         }
@@ -72,7 +72,7 @@ class Meme {
     }
 }
 tslib_1.__decorate([
-    discord_1.Command("search meme :word"),
+    discord_1.Command("search meme :name"),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [discord_1.CommandMessage]),
     tslib_1.__metadata("design:returntype", Promise)
@@ -85,7 +85,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], Meme.prototype, "addMeme", null);
 tslib_1.__decorate([
-    discord_1.Command("edit meme :id :name"),
+    discord_1.Command("edit meme :oldName :newName"),
     discord_1.Guard(OnlyGuild_1.OnlyGuild(settings_1.MADAGASCAR_GUILD_ID)),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [discord_1.CommandMessage]),
