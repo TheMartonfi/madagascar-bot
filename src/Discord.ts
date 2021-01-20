@@ -48,10 +48,12 @@ export abstract class DiscordApp {
 
 	@Command("commands")
 	private commands({ channel }: CommandMessage): void {
+		const privateCommands = ["!commands", "!count"];
+
 		channel.send(
 			Client.getCommands()
 				.map(({ commandName }: CommandInfos) => PREFIX + commandName)
-				.filter((name) => name !== "!commands")
+				.filter((name) => !privateCommands.includes(name))
 				.join(", ")
 		);
 	}

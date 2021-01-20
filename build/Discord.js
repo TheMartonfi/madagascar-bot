@@ -25,9 +25,10 @@ let DiscordApp = class DiscordApp {
         }
     }
     commands({ channel }) {
+        const privateCommands = ["!commands", "!count"];
         channel.send(discord_1.Client.getCommands()
             .map(({ commandName }) => settings_1.PREFIX + commandName)
-            .filter((name) => name !== "!commands")
+            .filter((name) => !privateCommands.includes(name))
             .join(", "));
     }
     async memes({ channel }) {
