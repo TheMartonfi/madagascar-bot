@@ -41,6 +41,14 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.21.tgz#d934aacc22424fe9622ebf6857370c052eae464e"
   integrity sha512-cHYfKsnwllYhjOzuC5q1VpguABBeecUp24yFluHpn/BQaVxB1CuQ1FSRZCzrPxrkIfWISXV2LbeoBthLWg0+0A==
 
+"@types/pg@^7.14.9":
+  version "7.14.9"
+  resolved "https://registry.yarnpkg.com/@types/pg/-/pg-7.14.9.tgz#5f09544d0b5b19fca48b63dd15644c475555ba60"
+  integrity sha512-ThTOEwOvYM++zRSGiajRqKyTQboCEJE2VI+30d93WX94sQ7CnrcJ7CICT9oC+QD8Co9JTYJkKEfEXSb5DjUOFA==
+  dependencies:
+    "@types/node" "*"
+    pg-types "^2.2.0"
+
 "@types/validator@^13.1.3":
   version "13.1.3"
   resolved "https://registry.yarnpkg.com/@types/validator/-/validator-13.1.3.tgz#366b394aa3fbeed2392bf0a20ded606fa4a3d35e"
@@ -934,7 +942,7 @@ pg-protocol@^1.4.0:
   resolved "https://registry.yarnpkg.com/pg-protocol/-/pg-protocol-1.4.0.tgz#43a71a92f6fe3ac559952555aa3335c8cb4908be"
   integrity sha512-El+aXWcwG/8wuFICMQjM5ZSAm6OWiJicFdNYo+VY3QP+8vI4SvLIWVe51PppTzMhikUJR+PsyIFKqfdXPz/yxA==
 
-pg-types@^2.1.0:
+pg-types@^2.1.0, pg-types@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/pg-types/-/pg-types-2.2.0.tgz#2d0250d636454f7cfa3b6ae0382fdfa8063254a3"
   integrity sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA==
