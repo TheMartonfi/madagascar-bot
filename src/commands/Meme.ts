@@ -1,30 +1,37 @@
 import { Command, CommandMessage, Guard } from "@typeit/discord";
-import { Message, MessageAttachment } from "discord.js";
+import { Message } from "discord.js";
 import { MADAGASCAR_GUILD_ID } from "../settings";
 import { OnlyGuild } from "../guards/OnlyGuild";
-import { memesCollection } from "../index";
-import { getMemeNames, formatCommandName } from "../utils";
+import {
+	formatCommandName,
+	makeMessageAttachment,
+	getMemeNames
+} from "../utils";
 import { Memes } from "../db";
 
 export abstract class Meme {
 	@Command("search meme :word")
-	private searchMeme({
+	private async searchMeme({
 		channel,
 		args: { word }
-	}: CommandMessage): Promise<Message> {
+	}: CommandMessage): Promise<void> {
 		const results: string[] = [];
+		const formattedWord = formatCommandName(word);
 
-		getMemeNames().forEach((name) => {
-			if (name.search(formatCommandName(word)) === -1) return;
+		const memeNames = await getMemeNames();
+		memeNames.forEach((name) => {
+			if (name.search(formattedWord) === -1) return;
 			results.push(name);
 		});
 
-		// Use new function to send message attachment
-		return results.length
-			? results.length === 1
-				? channel.send(new MessageAttachment(memesCollection.get(results[0])))
-				: channel.send(`Found ${results.length} memes: ${results.join(", ")}.`)
-			: channel.send("Meme not found.");
+		if (results.length > 1) {
+			channel.send(`Found ${results.length} memes: ${results.join(", ")}`);
+		} else if (results.length === 1) {
+			const meme = await Memes.findOne({ where: { name: formattedWord } });
+			channel.send(makeMessageAttachment(meme.message));
+		} else {
+			channel.send("Meme not found.");
+		}
 	}
 
 	@Command("add meme :name")

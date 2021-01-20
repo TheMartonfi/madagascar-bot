@@ -1,9 +1,9 @@
 import { Client } from "@typeit/discord";
-import { Collection } from "discord.js";
-import { BOT_TOKEN, PREFIX } from "./settings";
-import { Memes } from "./db";
+import { BOT_TOKEN } from "./settings";
+// import { Collection } from "discord.js";
+// import { Memes } from "./db";
 
-export const memesCollection = new Collection<string, string>();
+// export const memesCollection = new Collection<string, string>();
 
 const start = async (): Promise<void> => {
 	const client = new Client({
@@ -15,13 +15,13 @@ const start = async (): Promise<void> => {
 	await client.login(BOT_TOKEN);
 };
 
-const setMemeCommands = async (): Promise<void> => {
-	const memes = await Memes.findAll({ attributes: ["name", "message"] });
+// const setMemeCommands = async (): Promise<void> => {
+// const memes = await Memes.findAll({ attributes: ["name", "message"] });
 
-	memes.forEach(({ name, message }) =>
-		memesCollection.set(PREFIX + name, message)
-	);
-};
+// 	memes.forEach(({ name, message }) =>
+// 		memesCollection.set(PREFIX + name, message)
+// 	);
+// };
 
-setMemeCommands();
+// setMemeCommands();
 start();

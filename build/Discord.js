@@ -3,27 +3,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DiscordApp = void 0;
 const tslib_1 = require("tslib");
 const discord_1 = require("@typeit/discord");
-const discord_js_1 = require("discord.js");
+const db_1 = require("./db");
 const settings_1 = require("./settings");
-const index_1 = require("./index");
 const utils_1 = require("./utils");
 const NotBot_1 = require("./guards/NotBot");
-const MemeCommandExists_1 = require("./guards/MemeCommandExists");
 let DiscordApp = class DiscordApp {
     async logger([command]) { }
     async memeCommands([{ content, channel }]) {
         try {
-            const formattedCommandName = content.toLowerCase();
-            const attachment = new discord_js_1.MessageAttachment(index_1.memesCollection.get(formattedCommandName));
-            // Extract this logic into a function that returns the message to send
-            if (typeof attachment.attachment === "string") {
-                if (attachment.attachment.search("discordapp") !== -1) {
-                    channel.send(attachment);
-                }
-                else {
-                    channel.send(index_1.memesCollection.get(formattedCommandName));
-                }
-            }
+            const formattedCommandName = utils_1.formatCommandName(content);
+            const meme = await db_1.Memes.findOne({
+                where: { name: formattedCommandName }
+            });
+            if (!meme)
+                return;
+            channel.send(utils_1.makeMessageAttachment(meme.message));
         }
         catch (e) {
             channel.send(`Something went wrong.`);
@@ -36,8 +30,9 @@ let DiscordApp = class DiscordApp {
             .filter((name) => name !== "!commands")
             .join(", "));
     }
-    memes({ channel }) {
-        channel.send(utils_1.getMemeNames().join(", "));
+    async memes({ channel }) {
+        const memeNames = await utils_1.getMemeNames();
+        channel.send(memeNames.join(", "));
     }
 };
 tslib_1.__decorate([
@@ -48,7 +43,7 @@ tslib_1.__decorate([
 ], DiscordApp.prototype, "logger", null);
 tslib_1.__decorate([
     discord_1.On("message"),
-    discord_1.Guard(NotBot_1.NotBot, MemeCommandExists_1.MemeCommandExists),
+    discord_1.Guard(NotBot_1.NotBot),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [Object]),
     tslib_1.__metadata("design:returntype", Promise)
@@ -63,7 +58,7 @@ tslib_1.__decorate([
     discord_1.Command("memes"),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [discord_1.CommandMessage]),
-    tslib_1.__metadata("design:returntype", void 0)
+    tslib_1.__metadata("design:returntype", Promise)
 ], DiscordApp.prototype, "memes", null);
 DiscordApp = tslib_1.__decorate([
     discord_1.Discord(settings_1.PREFIX, {

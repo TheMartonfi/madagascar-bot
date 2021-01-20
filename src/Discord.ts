@@ -8,12 +8,14 @@ import {
 	Guard,
 	ArgsOf
 } from "@typeit/discord";
-import { MessageAttachment } from "discord.js";
+import { Memes } from "./db";
 import { PREFIX } from "./settings";
-import { memesCollection } from "./index";
-import { getMemeNames } from "./utils";
+import {
+	formatCommandName,
+	makeMessageAttachment,
+	getMemeNames
+} from "./utils";
 import { NotBot } from "./guards/NotBot";
-import { MemeCommandExists } from "./guards/MemeCommandExists";
 import { Logger } from "./guards/Logger";
 
 @Discord(PREFIX, {
@@ -25,24 +27,19 @@ export abstract class DiscordApp {
 	private async logger([command]: ArgsOf<"commandMessage">): Promise<void> {}
 
 	@On("message")
-	@Guard(NotBot, MemeCommandExists)
+	@Guard(NotBot)
 	private async memeCommands([
 		{ content, channel }
 	]: ArgsOf<"commandMessage">): Promise<void> {
 		try {
-			const formattedCommandName = content.toLowerCase();
-			const attachment = new MessageAttachment(
-				memesCollection.get(formattedCommandName)
-			);
+			const formattedCommandName = formatCommandName(content);
+			const meme = await Memes.findOne({
+				where: { name: formattedCommandName }
+			});
 
-			// Extract this logic into a function that returns the message to send
-			if (typeof attachment.attachment === "string") {
-				if (attachment.attachment.search("discordapp") !== -1) {
-					channel.send(attachment);
-				} else {
-					channel.send(memesCollection.get(formattedCommandName));
-				}
-			}
+			if (!meme) return;
+
+			channel.send(makeMessageAttachment(meme.message));
 		} catch (e) {
 			channel.send(`Something went wrong.`);
 			console.log(e);
@@ -60,7 +57,8 @@ export abstract class DiscordApp {
 	}
 
 	@Command("memes")
-	private memes({ channel }: CommandMessage): void {
-		channel.send(getMemeNames().join(", "));
+	private async memes({ channel }: CommandMessage): Promise<void> {
+		const memeNames = await getMemeNames();
+		channel.send(memeNames.join(", "));
 	}
 }

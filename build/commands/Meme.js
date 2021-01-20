@@ -3,26 +3,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Meme = void 0;
 const tslib_1 = require("tslib");
 const discord_1 = require("@typeit/discord");
-const discord_js_1 = require("discord.js");
 const settings_1 = require("../settings");
 const OnlyGuild_1 = require("../guards/OnlyGuild");
-const index_1 = require("../index");
 const utils_1 = require("../utils");
 const db_1 = require("../db");
 class Meme {
-    searchMeme({ channel, args: { word } }) {
+    async searchMeme({ channel, args: { word } }) {
         const results = [];
-        utils_1.getMemeNames().forEach((name) => {
-            if (name.search(utils_1.formatCommandName(word)) === -1)
+        const formattedWord = utils_1.formatCommandName(word);
+        const memeNames = await utils_1.getMemeNames();
+        memeNames.forEach((name) => {
+            if (name.search(formattedWord) === -1)
                 return;
             results.push(name);
         });
-        // Use new function to send message attachment
-        return results.length
-            ? results.length === 1
-                ? channel.send(new discord_js_1.MessageAttachment(index_1.memesCollection.get(results[0])))
-                : channel.send(`Found ${results.length} memes: ${results.join(", ")}.`)
-            : channel.send("Meme not found.");
+        if (results.length > 1) {
+            channel.send(`Found ${results.length} memes: ${results.join(", ")}`);
+        }
+        else if (results.length === 1) {
+            const meme = await db_1.Memes.findOne({ where: { name: formattedWord } });
+            channel.send(utils_1.makeMessageAttachment(meme.message));
+        }
+        else {
+            channel.send("Meme not found.");
+        }
     }
     async addMeme({ channel, attachments, args: { name } }) {
         var _a;
