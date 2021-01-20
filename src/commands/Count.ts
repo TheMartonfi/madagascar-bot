@@ -1,7 +1,7 @@
 import { Command, CommandMessage, Guard } from "@typeit/discord";
-import { OnlyGuild } from "../guards/OnlyGuild";
 import { WordCounts } from "../db";
 import { MADAGASCAR_GUILD_ID, RICO_TRIGGER } from "../settings";
+import { OnlyGuild } from "../guards/OnlyGuild";
 
 export abstract class Count {
 	@Command("count")

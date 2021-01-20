@@ -3,10 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Meme = void 0;
 const tslib_1 = require("tslib");
 const discord_1 = require("@typeit/discord");
+const db_1 = require("../db");
 const settings_1 = require("../settings");
 const OnlyGuild_1 = require("../guards/OnlyGuild");
 const utils_1 = require("../utils");
-const db_1 = require("../db");
 class Meme {
     async searchMeme({ channel, args: { word } }) {
         const results = [];

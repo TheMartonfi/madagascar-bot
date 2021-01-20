@@ -8,7 +8,6 @@ const settings_1 = require("./settings");
 const utils_1 = require("./utils");
 const NotBot_1 = require("./guards/NotBot");
 let DiscordApp = class DiscordApp {
-    async logger([command]) { }
     async memeCommands([{ content, channel }]) {
         try {
             const formattedCommandName = utils_1.formatCommandName(content);
@@ -36,12 +35,6 @@ let DiscordApp = class DiscordApp {
         channel.send(memeNames.join(", "));
     }
 };
-tslib_1.__decorate([
-    discord_1.On("message"),
-    tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
-    tslib_1.__metadata("design:returntype", Promise)
-], DiscordApp.prototype, "logger", null);
 tslib_1.__decorate([
     discord_1.On("message"),
     discord_1.Guard(NotBot_1.NotBot),

@@ -16,16 +16,11 @@ import {
 	getMemeNames
 } from "./utils";
 import { NotBot } from "./guards/NotBot";
-import { Logger } from "./guards/Logger";
 
 @Discord(PREFIX, {
 	import: [`${__dirname}/commands/*.js`, `${__dirname}/events/*.js`]
 })
 export abstract class DiscordApp {
-	@On("message")
-	// @Guard(Logger)
-	private async logger([command]: ArgsOf<"commandMessage">): Promise<void> {}
-
 	@On("message")
 	@Guard(NotBot)
 	private async memeCommands([

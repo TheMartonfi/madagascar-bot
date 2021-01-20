@@ -1,5 +1,6 @@
 import { Command, CommandMessage, Guard } from "@typeit/discord";
 import { Message } from "discord.js";
+import { Memes } from "../db";
 import { MADAGASCAR_GUILD_ID } from "../settings";
 import { OnlyGuild } from "../guards/OnlyGuild";
 import {
@@ -7,7 +8,6 @@ import {
 	makeMessageAttachment,
 	getMemeNames
 } from "../utils";
-import { Memes } from "../db";
 
 export abstract class Meme {
 	@Command("search meme :word")

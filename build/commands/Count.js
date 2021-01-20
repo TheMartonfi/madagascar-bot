@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Count = void 0;
 const tslib_1 = require("tslib");
 const discord_1 = require("@typeit/discord");
-const OnlyGuild_1 = require("../guards/OnlyGuild");
 const db_1 = require("../db");
 const settings_1 = require("../settings");
+const OnlyGuild_1 = require("../guards/OnlyGuild");
 class Count {
     async count({ channel }) {
         const wordCount = await db_1.WordCounts.findOne({
