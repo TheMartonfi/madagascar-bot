@@ -8,6 +8,7 @@ import {
 	Guard,
 	ArgsOf
 } from "@typeit/discord";
+import { Message } from "discord.js";
 import { Memes } from "./db";
 import { PREFIX } from "./settings";
 import {
@@ -72,8 +73,10 @@ export abstract class DiscordApp {
 	}
 
 	@Command("memes")
-	private async memes({ channel }: CommandMessage): Promise<void> {
+	private async memes({ channel }: CommandMessage): Promise<Message> {
 		const memeNames = await getMemeNames();
-		channel.send(memeNames.join(", "));
+
+		if (memeNames.length) return channel.send(memeNames.join(", "));
+		channel.send("No memes were found.");
 	}
 }

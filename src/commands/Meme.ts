@@ -1,10 +1,4 @@
-import {
-	Client,
-	CommandInfos,
-	Command,
-	CommandMessage,
-	Guard
-} from "@typeit/discord";
+import { Client, Command, CommandMessage, Guard } from "@typeit/discord";
 import { Message } from "discord.js";
 import { Memes } from "../db";
 import { MADAGASCAR_GUILD_ID } from "../settings";

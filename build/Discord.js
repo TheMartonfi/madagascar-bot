@@ -41,7 +41,9 @@ let DiscordApp = class DiscordApp {
     }
     async memes({ channel }) {
         const memeNames = await utils_1.getMemeNames();
-        channel.send(memeNames.join(", "));
+        if (memeNames.length)
+            return channel.send(memeNames.join(", "));
+        channel.send("No memes were found.");
     }
 };
 tslib_1.__decorate([
