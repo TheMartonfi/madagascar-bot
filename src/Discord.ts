@@ -43,12 +43,27 @@ export abstract class DiscordApp {
 
 	@Command("commands")
 	private commands({ channel }: CommandMessage): void {
-		const privateCommands = ["!commands", "!count"];
+		const privateCommands = ["commands", "count"];
 
 		channel.send(
 			Client.getCommands()
-				.map(({ commandName }: CommandInfos) => PREFIX + commandName)
-				.filter((name) => !privateCommands.includes(name))
+				.filter(
+					({ commandName }: CommandInfos) =>
+						typeof commandName === "string" &&
+						!privateCommands.includes(commandName)
+				)
+				.map(({ commandName }: CommandInfos) => {
+					const commandNameWords: string[] = [];
+					if (typeof commandName === "string") {
+						commandName
+							.split(":")
+							.forEach((word, index) =>
+								commandNameWords.push(index === 0 ? word : `[${word}]`)
+							);
+					}
+
+					return PREFIX + commandNameWords.join("");
+				})
 				.join(", ")
 		);
 	}

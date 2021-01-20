@@ -24,10 +24,19 @@ let DiscordApp = class DiscordApp {
         }
     }
     commands({ channel }) {
-        const privateCommands = ["!commands", "!count"];
+        const privateCommands = ["commands", "count"];
         channel.send(discord_1.Client.getCommands()
-            .map(({ commandName }) => settings_1.PREFIX + commandName)
-            .filter((name) => !privateCommands.includes(name))
+            .filter(({ commandName }) => typeof commandName === "string" &&
+            !privateCommands.includes(commandName))
+            .map(({ commandName }) => {
+            const commandNameWords = [];
+            if (typeof commandName === "string") {
+                commandName
+                    .split(":")
+                    .forEach((word, index) => commandNameWords.push(index === 0 ? word : `[${word}]`));
+            }
+            return settings_1.PREFIX + commandNameWords.join("");
+        })
             .join(", "));
     }
     async memes({ channel }) {
