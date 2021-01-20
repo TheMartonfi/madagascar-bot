@@ -42,7 +42,7 @@ export abstract class Meme {
 		args: { name, file }
 	}: CommandMessage): Promise<void> {
 		const formattedName = formatCommandName(name);
-		const attachmentUrl = attachments.first().url;
+		const attachmentUrl = attachments.first()?.url;
 		const message = attachmentUrl ? attachmentUrl : file;
 
 		try {
