@@ -28,10 +28,10 @@ class Meme {
             channel.send("Meme not found.");
         }
     }
-    async addMeme({ channel, attachments, args: { name } }) {
-        var _a;
+    async addMeme({ channel, attachments, args: { name, file } }) {
         const formattedName = utils_1.formatCommandName(name);
-        const message = (_a = attachments.first()) === null || _a === void 0 ? void 0 : _a.url;
+        const attachmentUrl = attachments.first().url;
+        const message = attachmentUrl ? attachmentUrl : file;
         try {
             const meme = await db_1.Memes.create({ name: formattedName, message });
             channel.send(`Meme ${meme.name} successfully added.`);
@@ -78,7 +78,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], Meme.prototype, "searchMeme", null);
 tslib_1.__decorate([
-    discord_1.Command("add meme :name"),
+    discord_1.Command("add meme :name :file"),
     discord_1.Guard(OnlyGuild_1.OnlyGuild(settings_1.MADAGASCAR_GUILD_ID)),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [discord_1.CommandMessage]),

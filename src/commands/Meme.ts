@@ -34,15 +34,16 @@ export abstract class Meme {
 		}
 	}
 
-	@Command("add meme :name")
+	@Command("add meme :name :file")
 	@Guard(OnlyGuild(MADAGASCAR_GUILD_ID))
 	private async addMeme({
 		channel,
 		attachments,
-		args: { name }
+		args: { name, file }
 	}: CommandMessage): Promise<void> {
 		const formattedName = formatCommandName(name);
-		const message = attachments.first()?.url;
+		const attachmentUrl = attachments.first().url;
+		const message = attachmentUrl ? attachmentUrl : file;
 
 		try {
 			const meme = await Memes.create({ name: formattedName, message });

@@ -54,6 +54,7 @@ export abstract class DiscordApp {
 				)
 				.map(({ commandName }: CommandInfos) => {
 					const commandNameWords: string[] = [];
+
 					if (typeof commandName === "string") {
 						commandName
 							.split(":")
