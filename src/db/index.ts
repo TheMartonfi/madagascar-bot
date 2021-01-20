@@ -1,5 +1,5 @@
 import { Sequelize, Model, STRING, TEXT, INTEGER } from "sequelize";
-import { DB_URL, DB_MIGRATE, DB_SEED, RICO_TRIGGER } from "../settings";
+import { DATABASE_URL, DB_MIGRATE, DB_SEED, RICO_TRIGGER } from "../settings";
 import { memeCommands } from "../memes.json";
 
 export interface Meme extends Model {
@@ -12,7 +12,7 @@ export interface WordCount extends Model {
 	count: number;
 }
 
-const sequelize = new Sequelize(DB_URL, {
+const sequelize = new Sequelize(DATABASE_URL, {
 	logging: false
 });
 
