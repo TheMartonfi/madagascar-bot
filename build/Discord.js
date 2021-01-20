@@ -33,11 +33,11 @@ let DiscordApp = class DiscordApp {
             if (typeof commandName === "string") {
                 commandName
                     .split(":")
-                    .forEach((word, index) => commandNameWords.push(index === 0 ? word : `[${word.trim()}]`));
+                    .forEach((word, index) => commandNameWords.push(index === 0 ? word.trim() : `"${word.trim()}"`));
             }
-            return settings_1.PREFIX + commandNameWords.join("");
+            return settings_1.PREFIX + commandNameWords.join(" ");
         })
-            .join(", "));
+            .join("\n"));
     }
     async memes({ channel }) {
         const memeNames = await utils_1.getMemeNames();

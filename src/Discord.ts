@@ -58,13 +58,15 @@ export abstract class DiscordApp {
 						commandName
 							.split(":")
 							.forEach((word, index) =>
-								commandNameWords.push(index === 0 ? word : `[${word.trim()}]`)
+								commandNameWords.push(
+									index === 0 ? word.trim() : `"${word.trim()}"`
+								)
 							);
 					}
 
-					return PREFIX + commandNameWords.join("");
+					return PREFIX + commandNameWords.join(" ");
 				})
-				.join(", ")
+				.join("\n")
 		);
 	}
 
