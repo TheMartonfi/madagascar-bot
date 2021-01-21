@@ -7,6 +7,7 @@
 	"license": "MIT",
 	"scripts": {
 		"tsc:w": "tsc -w",
+		"postinstall": "tsc",
 		"start": "node build/index.js",
 		"start:dev": "concurrently \"yarn tsc:w\" \"nodemon build/index.js\"",
 		"db:migrate": "DB_MIGRATE=true node build/index.js",
