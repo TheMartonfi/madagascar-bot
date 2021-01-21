@@ -5,6 +5,7 @@ import { NotBot } from "../guards/NotBot";
 import { OnlyRoom } from "../guards/OnlyRoom";
 import { OnlyWord } from "../guards/OnlyWord";
 
+// Private feature
 export abstract class VoiceKickUser {
 	@On("message")
 	@Guard(NotBot, OnlyRoom(RICO_ROOM_ID), OnlyWord(RICO_TRIGGER))

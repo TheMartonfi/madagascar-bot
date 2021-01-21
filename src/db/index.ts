@@ -1,6 +1,5 @@
 import { Sequelize, Model, STRING, TEXT, INTEGER } from "sequelize";
 import { DATABASE_URL, DB_MIGRATE, DB_SEED, RICO_TRIGGER } from "../settings";
-import { memeCommands } from "../memes.json";
 
 export interface Meme extends Model {
 	name: string;
@@ -46,17 +45,23 @@ const syncSequelize = async () => {
 	await WordCounts.sync({ force: DB_MIGRATE });
 
 	if (DB_SEED) {
+		// Private feature
 		WordCounts.create({
 			word: RICO_TRIGGER,
-			count: 33
+			count: 0
 		});
 
-		memeCommands.forEach(({ name, message }) =>
-			Memes.create({
-				name,
-				message
-			})
-		);
+		// Public feature
+		Memes.create({
+			name: "test",
+			message: "test meme"
+		});
+
+		Memes.create({
+			name: "file",
+			message:
+				"https://cdn.discordapp.com/attachments/799012670899879986/801619938623619112/He_He_He_Yup_1.mp4"
+		});
 	}
 };
 
