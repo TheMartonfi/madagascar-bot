@@ -25,9 +25,12 @@ export abstract class DiscordApp {
 	@On("message")
 	@Guard(NotBot)
 	private async memeCommands([
-		{ content, channel, guild }
+		{ content, channel }
 	]: ArgsOf<"commandMessage">): Promise<void> {
 		try {
+			// Move this into IsPrefix guard
+			if (content[0] !== PREFIX) return;
+
 			const formattedCommandName = formatCommandName(content);
 			const meme = await Memes.findOne({
 				where: { name: formattedCommandName }
