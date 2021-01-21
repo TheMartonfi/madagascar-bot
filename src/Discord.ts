@@ -25,7 +25,7 @@ export abstract class DiscordApp {
 	@On("message")
 	@Guard(NotBot)
 	private async memeCommands([
-		{ content, channel }
+		{ content, channel, guild }
 	]: ArgsOf<"commandMessage">): Promise<void> {
 		try {
 			const formattedCommandName = formatCommandName(content);

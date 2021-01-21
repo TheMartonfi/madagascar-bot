@@ -1,7 +1,7 @@
 import { Client, Command, CommandMessage, Guard } from "@typeit/discord";
 import { Message } from "discord.js";
 import { Memes } from "../db";
-import { MADAGASCAR_GUILD_ID } from "../settings";
+import { PRIVATE_GUILD_ID } from "../settings";
 import { OnlyGuild } from "../guards/OnlyGuild";
 import {
 	formatCommandName,
@@ -35,13 +35,15 @@ export abstract class Meme {
 	}
 
 	@Command("add meme :name :file")
-	@Guard(OnlyGuild(MADAGASCAR_GUILD_ID))
+	@Guard(OnlyGuild(PRIVATE_GUILD_ID))
 	private async addMeme({
+		content,
 		channel,
 		attachments,
-		args: { name, file }
+		args: { name }
 	}: CommandMessage): Promise<Message> {
 		const formattedName = formatCommandName(name);
+		const messageAfterArgs = content.split(" ").slice(3).join(" ");
 
 		for (const { commandName } of Client.getCommands()) {
 			if (commandName === formattedName)
@@ -49,7 +51,7 @@ export abstract class Meme {
 		}
 
 		const attachmentUrl = attachments.first()?.url;
-		const message = attachmentUrl ? attachmentUrl : file;
+		const message = attachmentUrl ? attachmentUrl : messageAfterArgs;
 
 		try {
 			const meme = await Memes.create({ name: formattedName, message });
@@ -65,7 +67,7 @@ export abstract class Meme {
 	}
 
 	@Command("edit meme :oldName :newName")
-	@Guard(OnlyGuild(MADAGASCAR_GUILD_ID))
+	@Guard(OnlyGuild(PRIVATE_GUILD_ID))
 	private async editMeme({
 		channel,
 		args: { oldName, newName }
@@ -92,7 +94,7 @@ export abstract class Meme {
 	}
 
 	@Command("delete meme :name")
-	@Guard(OnlyGuild(MADAGASCAR_GUILD_ID))
+	@Guard(OnlyGuild(PRIVATE_GUILD_ID))
 	private async deleteMeme({
 		channel,
 		args: { name }
