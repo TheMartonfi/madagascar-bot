@@ -52,12 +52,12 @@ const syncSequelize = async () => {
 		});
 
 		// Public feature
-		Memes.create({
+		await Memes.create({
 			name: "test",
 			message: "test meme"
 		});
 
-		Memes.create({
+		await Memes.create({
 			name: "file",
 			message:
 				"https://cdn.discordapp.com/attachments/799012670899879986/801619938623619112/He_He_He_Yup_1.mp4"

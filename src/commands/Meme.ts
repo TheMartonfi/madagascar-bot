@@ -21,13 +21,13 @@ export abstract class Meme {
 		const memeNames = await getMemeNames();
 		memeNames.forEach((name) => {
 			if (name.search(formattedName) === -1) return;
-			results.push(name);
+			results.push(formatCommandName(name));
 		});
 
 		if (results.length > 1) {
 			channel.send(`Found ${results.length} memes: ${results.join(", ")}`);
 		} else if (results.length === 1) {
-			const meme = await Memes.findOne({ where: { name: formattedName } });
+			const meme = await Memes.findOne({ where: { name: results[0] } });
 			channel.send(makeMessageAttachment(meme.message));
 		} else {
 			channel.send("Meme not found.");
