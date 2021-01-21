@@ -63,6 +63,8 @@ const syncSequelize = async () => {
 				"https://cdn.discordapp.com/attachments/799012670899879986/801619938623619112/He_He_He_Yup_1.mp4"
 		});
 	}
+
+	if (DB_MIGRATE || DB_SEED) process.exit();
 };
 
 syncSequelize();
