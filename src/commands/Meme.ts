@@ -54,6 +54,8 @@ export abstract class Meme {
 		const message = attachmentUrl ? attachmentUrl : messageAfterArgs;
 
 		try {
+			if (!messageAfterArgs) return channel.send("Meme cannot be empty.");
+
 			const meme = await Memes.create({ name: formattedName, message });
 			channel.send(`Meme ${meme.name} successfully added.`);
 		} catch (e) {
