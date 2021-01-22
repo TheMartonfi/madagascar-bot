@@ -40,7 +40,6 @@ export abstract class DiscordApp {
 
 			channel.send(makeMessageAttachment(meme.message));
 		} catch (e) {
-			channel.send(`Something went wrong.`);
 			console.log(e);
 		}
 	}

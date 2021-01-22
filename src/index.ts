@@ -9,6 +9,7 @@ const start = async (): Promise<void> => {
 	});
 
 	await client.login(BOT_TOKEN);
+	console.log("Bot gracefully logged in.");
 };
 
 start();

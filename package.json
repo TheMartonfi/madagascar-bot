@@ -14,7 +14,7 @@
 		"build": "tsc",
 		"db:migrate": "DB_MIGRATE=true node build/index.js",
 		"db:seed": "DB_SEED=true node build/index.js",
-		"db:reset": "DB_MIGRATE=true DB_SEED=true node build/index.js",
+		"db:reset": "DB_RESET=true node build/index.js",
 		"heroku:log": "heroku logs -a madagascar-bot --tail"
 	},
 	"dependencies": {
