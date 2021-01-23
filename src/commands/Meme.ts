@@ -1,6 +1,7 @@
 import { Client, Command, CommandMessage, Guard } from "@typeit/discord";
 import { Message } from "discord.js";
 import { Memes } from "../db";
+import { error } from "../settings";
 import { PRIVATE_GUILD_ID } from "../settings";
 import { OnlyGuild } from "../guards/OnlyGuild";
 import {
@@ -63,7 +64,7 @@ export abstract class Meme {
 				channel.send("That meme already exists.");
 			} else {
 				channel.send(`There was an error adding ${formattedName}.`);
-				console.log(e);
+				console.log(error(e));
 			}
 		}
 	}
@@ -90,7 +91,7 @@ export abstract class Meme {
 				channel.send("That meme already exists.");
 			} else {
 				channel.send(`There was an error updating ${formattedOldName}.`);
-				console.log(e);
+				console.log(error(e));
 			}
 		}
 	}

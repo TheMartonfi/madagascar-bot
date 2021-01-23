@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import chalk from "chalk";
 dotenv.config();
 
 export const PREFIX = process.env.PREFIX || "!";
@@ -14,3 +15,7 @@ export const { PRIVATE_GUILD_ID } = process.env;
 export const { RICO_USER_ID } = process.env;
 export const { RICO_TRIGGER } = process.env;
 export const { RICO_ROOM_ID } = process.env;
+
+export const info = chalk.blue;
+export const sql = chalk.yellow;
+export const error = chalk.red;

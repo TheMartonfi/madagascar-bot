@@ -1,5 +1,6 @@
 import { Sequelize, Model, STRING, TEXT, INTEGER } from "sequelize";
 import {
+	sql,
 	DATABASE_URL,
 	DB_MIGRATE,
 	DB_SEED,
@@ -18,7 +19,7 @@ export interface WordCount extends Model {
 }
 
 const sequelize = new Sequelize(DATABASE_URL, {
-	logging: false
+	logging: (query: string) => console.log(sql(query))
 });
 
 export const Memes = sequelize.define<Meme>("memes", {
@@ -51,7 +52,7 @@ const syncSequelize = async () => {
 
 	if (DB_SEED || DB_RESET) {
 		// Private feature
-		WordCounts.create({
+		await WordCounts.create({
 			word: RICO_TRIGGER,
 			count: 0
 		});

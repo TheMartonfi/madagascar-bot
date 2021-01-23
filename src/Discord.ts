@@ -10,6 +10,7 @@ import {
 } from "@typeit/discord";
 import { Message } from "discord.js";
 import { Memes } from "./db";
+import { error } from "./settings";
 import { PREFIX } from "./settings";
 import {
 	formatCommandName,
@@ -28,7 +29,6 @@ export abstract class DiscordApp {
 		{ content, channel }
 	]: ArgsOf<"commandMessage">): Promise<void> {
 		try {
-			// Move this into IsPrefix guard
 			if (content[0] !== PREFIX) return;
 
 			const formattedCommandName = formatCommandName(content);
@@ -40,7 +40,7 @@ export abstract class DiscordApp {
 
 			channel.send(makeMessageAttachment(meme.message));
 		} catch (e) {
-			console.log(e);
+			console.log(error(e));
 		}
 	}
 
