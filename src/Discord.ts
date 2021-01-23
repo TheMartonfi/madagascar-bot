@@ -23,6 +23,11 @@ import { NotBot } from "./guards/NotBot";
 	import: [`${__dirname}/commands/*.js`, `${__dirname}/events/*.js`]
 })
 export abstract class DiscordApp {
+	@On("ready")
+	private setActivity(command: ArgsOf<"ready">, client: Client) {
+		client.user.setActivity("!help");
+	}
+
 	@On("message")
 	@Guard(NotBot)
 	private async memeCommands([
