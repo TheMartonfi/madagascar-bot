@@ -35,6 +35,7 @@ export abstract class DiscordApp {
 	]: ArgsOf<"commandMessage">): Promise<void> {
 		try {
 			if (content[0] !== PREFIX) return;
+			// or if content is a command name
 
 			const formattedCommandName = formatCommandName(content);
 			const meme = await Memes.findOne({

@@ -1,4 +1,4 @@
-import { Sequelize, Model, STRING, TEXT, INTEGER } from "sequelize";
+import { Sequelize, Model, STRING, TEXT, INTEGER, DATE } from "sequelize";
 import {
 	sql,
 	DATABASE_URL,
@@ -16,6 +16,15 @@ export interface Meme extends Model {
 export interface WordCount extends Model {
 	word: string;
 	count: number;
+}
+
+export interface SrcNewRunNotif extends Model {
+	gameName: string;
+	gameId: string;
+	categoryId?: string;
+	lastVerifiedDate?: Date;
+	channelId: string;
+	guildId: string;
 }
 
 const sequelize = new Sequelize(DATABASE_URL, {
@@ -46,6 +55,34 @@ export const WordCounts = sequelize.define<WordCount>("word_counts", {
 		allowNull: false
 	}
 });
+
+export const SrcNewRunNotifs = sequelize.define<SrcNewRunNotif>(
+	"src_new_run_notifs",
+	{
+		gameName: {
+			type: STRING,
+			allowNull: false
+		},
+		gameId: {
+			type: STRING,
+			allowNull: false
+		},
+		categoryId: {
+			type: STRING
+		},
+		lastVerifiedDate: {
+			type: DATE
+		},
+		channelId: {
+			type: STRING,
+			allowNull: false
+		},
+		guildId: {
+			type: STRING,
+			allowNull: false
+		}
+	}
+);
 
 const syncSequelize = async () => {
 	await sequelize.sync({ alter: DB_MIGRATE, force: DB_RESET });
