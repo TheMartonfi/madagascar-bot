@@ -22,7 +22,7 @@ export interface SrcNewRunNotif extends Model {
 	id: number;
 	gameId: string;
 	categoryId?: string;
-	lastVerifiedDate?: number;
+	lastVerifiedDate: number;
 	channelId: string;
 	guildId: string;
 }

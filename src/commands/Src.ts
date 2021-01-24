@@ -5,7 +5,7 @@ import { SrcNewRunNotifs } from "../db";
 import { error } from "../settings";
 
 interface SrcResponse<T> {
-	data: T[];
+	data: T;
 }
 
 interface SrcGame {
@@ -14,6 +14,7 @@ interface SrcGame {
 		international: string;
 	};
 	links: Array<{ rel: string; uri: string }>;
+	assets: { "cover-tiny": { uri: string } };
 }
 
 interface SrcCategory {
@@ -28,6 +29,15 @@ interface SrcRun {
 	status: {
 		"verify-date": string;
 	};
+	players: Array<{ uri: string }>;
+	times: { realtime_t: number };
+	links: Array<{ rel: string; uri: string }>;
+}
+
+interface SrcPlayer {
+	names: {
+		international: string;
+	};
 }
 
 const src = axios.create({
@@ -38,20 +48,36 @@ const src = axios.create({
 // !delete src :gameName :categoryName
 
 export abstract class Src {
-	// I'm going to need the game name, category, runner name, pb, comment
-	// Use this function to make embed need to pass params
-	// return Discord Embed
-	// Make getGameNameById(id: string) and getCategoryNameById(id: string)
-	private makeEmbeddedSrcRun(run: SrcRun) {
-		// var embed = new MessageEmbed()
-		// 	 I can ignore author?
-		// 	.setAuthor(pb_msg.author.name, pb_msg.author.image)
-		// 	.setTitle(response.data.data.weblink)
-		// 	.setDescription(pb_msg.description)
-		// 	.addField(
-		// 		`${plyr_name} got a ${timeStr} in ${cat_name}!`,
-		// 		pb_msg.field.description
-		// 	);
+	private async makeEmbeddedSrcRun({
+		players: [player],
+		times,
+		links,
+		weblink,
+		comment
+	}: SrcRun): Promise<MessageEmbed> {
+		const playerData = await axios.get<SrcResponse<SrcPlayer>>(player.uri);
+		const playerName = playerData.data.data.names.international;
+
+		const game = links.find((link) => link.rel === "game");
+		const gameData = await axios.get<SrcResponse<SrcGame>>(game.uri);
+		const gameName = gameData.data.data.names.international;
+		const gameIconUrl = gameData.data.data.assets["cover-tiny"].uri;
+
+		const category = links.find((link) => link.rel === "category");
+		const categoryData = await axios.get<SrcResponse<SrcCategory>>(
+			category.uri
+		);
+		const categoryName = categoryData.data.data.name;
+
+		const time = new Date(times["realtime_t"] * 1000)
+			.toISOString()
+			.substr(11, 8);
+
+		return new MessageEmbed()
+			.setAuthor("Speedrun.com", gameIconUrl)
+			.setTitle(`${playerName} got a ${time} in ${gameName} ${categoryName}!`)
+			.setDescription(weblink)
+			.setFooter(`Run Comment: ${comment}`);
 	}
 
 	private async getVerifiedRuns(
@@ -60,7 +86,7 @@ export abstract class Src {
 	): Promise<SrcRun[]> {
 		const {
 			data: { data }
-		} = await src.get<SrcResponse<SrcRun>>("/runs", {
+		} = await src.get<SrcResponse<SrcRun[]>>("/runs", {
 			params: {
 				game: gameId,
 				category: categoryId,
@@ -74,7 +100,7 @@ export abstract class Src {
 	}
 
 	@On("ready")
-	private async setNotifs(command: ArgsOf<"ready">, client: Client) {
+	private async setSrcNotifs(command: ArgsOf<"ready">, client: Client) {
 		const srcNotifs = await SrcNewRunNotifs.findAll({
 			attributes: [
 				"id",
@@ -100,16 +126,19 @@ export abstract class Src {
 							);
 
 							const channel = await client.channels.fetch(channelId);
+							const message = await this.makeEmbeddedSrcRun(run);
 							// @ts-ignore
-							channel.send(this.makeEmbeddedSrcRun(run));
+							channel.send(message);
 						}
 					});
 				}, 60000)
 		);
 	}
 
+	// Need to add support for category names with more than one word
 	@Command("add src :abbreviation :categoryName")
-	private async addNotif(
+	// @Guard(OnlyGuildOwner)
+	private async addSrcNotif(
 		{ channel, guild, args: { abbreviation, categoryName } }: CommandMessage,
 		client: Client
 	): Promise<Message> {
@@ -120,7 +149,7 @@ export abstract class Src {
 			data: {
 				data: [game]
 			}
-		} = await src.get<SrcResponse<SrcGame>>("/games", {
+		} = await src.get<SrcResponse<SrcGame[]>>("/games", {
 			params: { abbreviation }
 		});
 
@@ -130,11 +159,8 @@ export abstract class Src {
 			);
 
 		const { uri } = game.links.find((link) => link.rel === "categories");
-		const {
-			data: { data }
-		} = await axios.get<SrcResponse<SrcCategory>>(uri);
-
-		const category = data.find(
+		const categoryData = await axios.get<SrcResponse<SrcCategory[]>>(uri);
+		const category = categoryData.data.data.find(
 			(srcCategory) =>
 				srcCategory.name.toLowerCase() === categoryName?.toLowerCase()
 		);
@@ -150,7 +176,7 @@ export abstract class Src {
 				lastVerifiedDate: Date.parse(lastVerifiedRun.status["verify-date"])
 			});
 
-			client.emit("ready");
+			await this.setSrcNotifs(null, client);
 
 			channel.send(
 				`Succesfully added src notfications for ${game.names.international}${
