@@ -1,4 +1,4 @@
-import { Sequelize, Model, STRING, TEXT, INTEGER, DATE } from "sequelize";
+import { Sequelize, Model, STRING, TEXT, INTEGER, BIGINT } from "sequelize";
 import {
 	sql,
 	DATABASE_URL,
@@ -19,10 +19,10 @@ export interface WordCount extends Model {
 }
 
 export interface SrcNewRunNotif extends Model {
-	gameName: string;
+	id: number;
 	gameId: string;
 	categoryId?: string;
-	lastVerifiedDate?: Date;
+	lastVerifiedDate?: number;
 	channelId: string;
 	guildId: string;
 }
@@ -59,10 +59,6 @@ export const WordCounts = sequelize.define<WordCount>("word_counts", {
 export const SrcNewRunNotifs = sequelize.define<SrcNewRunNotif>(
 	"src_new_run_notifs",
 	{
-		gameName: {
-			type: STRING,
-			allowNull: false
-		},
 		gameId: {
 			type: STRING,
 			allowNull: false
@@ -71,7 +67,8 @@ export const SrcNewRunNotifs = sequelize.define<SrcNewRunNotif>(
 			type: STRING
 		},
 		lastVerifiedDate: {
-			type: DATE
+			type: BIGINT,
+			allowNull: false
 		},
 		channelId: {
 			type: STRING,
