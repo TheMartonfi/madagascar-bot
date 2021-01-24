@@ -1,6 +1,14 @@
-import { Client, Command, CommandMessage, On, ArgsOf } from "@typeit/discord";
+import {
+	Client,
+	Command,
+	CommandMessage,
+	Guard,
+	On,
+	ArgsOf
+} from "@typeit/discord";
 import axios from "axios";
 import { Message, MessageEmbed } from "discord.js";
+import { OnlyGuildOwner } from "../guards/OnlyGuildOwner";
 import { SrcNewRunNotifs } from "../db";
 import { error } from "../settings";
 
@@ -145,15 +153,17 @@ export abstract class Src {
 				}, 60000)
 			)
 		);
-
-		console.log("after clear: ", this.intervals);
 	}
 
-	// Need to add support for category names with more than one word
 	@Command("add src :abbreviation :categoryName")
-	// @Guard(OnlyGuildOwner)
+	@Guard(OnlyGuildOwner)
 	private async addSrcNotif(
-		{ channel, guild, args: { abbreviation, categoryName } }: CommandMessage,
+		{
+			content,
+			channel,
+			guild,
+			args: { abbreviation, categoryName }
+		}: CommandMessage,
 		client: Client
 	): Promise<Message> {
 		if (!abbreviation)
@@ -174,9 +184,13 @@ export abstract class Src {
 
 		const { uri } = game.links.find((link) => link.rel === "categories");
 		const categoryData = await axios.get<SrcResponse<SrcCategory[]>>(uri);
+		const messageAfterArgs = content
+			.split(" ")
+			.slice(3)
+			.join(" ")
+			.toLowerCase();
 		const category = categoryData.data.data.find(
-			(srcCategory) =>
-				srcCategory.name.toLowerCase() === categoryName?.toLowerCase()
+			(srcCategory) => srcCategory.name.toLowerCase() === messageAfterArgs
 		);
 
 		const [lastVerifiedRun] = await this.getVerifiedRuns(game.id, category?.id);
@@ -193,6 +207,7 @@ export abstract class Src {
 
 			await this.setSrcNotifs(null, client);
 
+			console.log(typeof channel);
 			channel.send(
 				`Succesfully added src notfications for ${game.names.international}${
 					category ? ` ${category.name}` : ""
