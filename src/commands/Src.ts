@@ -82,7 +82,7 @@ export abstract class Src {
 
 	private async getVerifiedRuns(
 		gameId: string,
-		categoryId: string
+		categoryId: string | undefined
 	): Promise<SrcRun[]> {
 		const {
 			data: { data }
@@ -99,8 +99,13 @@ export abstract class Src {
 		return data;
 	}
 
+	private intervals: NodeJS.Timeout[] = [];
+
 	@On("ready")
-	private async setSrcNotifs(command: ArgsOf<"ready">, client: Client) {
+	private async setSrcNotifs(
+		command: ArgsOf<"ready">,
+		client: Client
+	): Promise<void> {
 		const srcNotifs = await SrcNewRunNotifs.findAll({
 			attributes: [
 				"id",
@@ -111,12 +116,17 @@ export abstract class Src {
 			]
 		});
 
-		srcNotifs.forEach(
-			({ id, gameId, categoryId, lastVerifiedDate, channelId }) =>
+		this.intervals.forEach((interval) => {
+			clearInterval(interval);
+			this.intervals.shift();
+		});
+
+		srcNotifs.map(({ id, gameId, categoryId, channelId, lastVerifiedDate }) =>
+			this.intervals.push(
 				setInterval(async () => {
 					const runs = await this.getVerifiedRuns(gameId, categoryId);
 
-					runs.forEach(async (run) => {
+					runs.reverse().forEach(async (run) => {
 						const verifiedDate = Date.parse(run.status["verify-date"]);
 
 						if (verifiedDate > lastVerifiedDate) {
@@ -129,10 +139,14 @@ export abstract class Src {
 							const message = await this.makeEmbeddedSrcRun(run);
 							// @ts-ignore
 							channel.send(message);
+							this.setSrcNotifs(command, client);
 						}
 					});
 				}, 60000)
+			)
 		);
+
+		console.log("after clear: ", this.intervals);
 	}
 
 	// Need to add support for category names with more than one word
@@ -174,6 +188,7 @@ export abstract class Src {
 				channelId: channel.id,
 				guildId: guild.id,
 				lastVerifiedDate: Date.parse(lastVerifiedRun.status["verify-date"])
+				// lastVerifiedDate: Date.parse("2021-01-23T12:12:12Z")
 			});
 
 			await this.setSrcNotifs(null, client);
