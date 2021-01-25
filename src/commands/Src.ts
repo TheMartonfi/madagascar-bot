@@ -232,8 +232,7 @@ export abstract class Src {
 					categoryName,
 					channelId: channel.id,
 					guildId: guild.id,
-					// lastVerifiedDate: Date.parse(lastVerifiedRun.status["verify-date"])
-					lastVerifiedDate: Date.parse("2021-01-23T12:12:12Z")
+					lastVerifiedDate: Date.parse(lastVerifiedRun.status["verify-date"])
 				}
 			});
 
