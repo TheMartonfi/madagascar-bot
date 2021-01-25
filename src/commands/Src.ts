@@ -156,7 +156,31 @@ export abstract class Src {
 		);
 	}
 
-	// add command !notifications
+	@Command("notifications")
+	private async notifications({
+		channel,
+		guild
+	}: CommandMessage): Promise<Message> {
+		const allNotifications = await SrcNewRunNotifs.findAll({
+			where: { guildId: guild.id }
+		});
+
+		if (allNotifications.length)
+			return channel.send(
+				allNotifications
+					.map(
+						(notification) =>
+							`${notification.abbreviation}${
+								notification?.categoryName
+									? ` ${notification.categoryName}`
+									: ""
+							}`
+					)
+					.join(", ")
+			);
+
+		channel.send("There are no src notifications.");
+	}
 
 	@Command("add src :abbreviation :categoryName")
 	@Guard(OnlyGuildOwner)
@@ -180,24 +204,18 @@ export abstract class Src {
 				"The abbreviation you submitted returned no results."
 			);
 
-		const categoryName = this.getCategoryName(content);
-		const srcNotif = await SrcNewRunNotifs.findOne({
-			where: { abbreviation, categoryName, guildId: guild.id }
+		const srcNotifs = await SrcNewRunNotifs.findOne({
+			where: { abbreviation, categoryName: "", guildId: guild.id }
 		});
 
-		if (srcNotif) return channel.send("That src notification already exists.");
-
-		const srcNotifAllCategories = await SrcNewRunNotifs.findOne({
-			where: { abbreviation, guildId: guild.id }
-		});
-
-		if (srcNotifAllCategories)
+		if (srcNotifs)
 			return channel.send(
 				"You are already getting notifications for all categories."
 			);
 
 		const { uri } = game.links.find((link) => link.rel === "categories");
 		const categoryData = await axios.get<SrcResponse<SrcCategory[]>>(uri);
+		const categoryName = this.getCategoryName(content);
 
 		const category = categoryData.data.data.find(
 			(srcCategory) => srcCategory.name.toLowerCase() === categoryName
@@ -206,16 +224,21 @@ export abstract class Src {
 		const [lastVerifiedRun] = await this.getVerifiedRuns(game.id, category?.id);
 
 		try {
-			await SrcNewRunNotifs.create({
-				gameId: game.id,
-				categoryId: category?.id,
-				abbreviation,
-				categoryName,
-				channelId: channel.id,
-				guildId: guild.id,
-				lastVerifiedDate: Date.parse(lastVerifiedRun.status["verify-date"])
-				// lastVerifiedDate: Date.parse("2021-01-23T12:12:12Z")
+			const [srcNotif, created] = await SrcNewRunNotifs.findOrCreate({
+				where: {
+					gameId: game.id,
+					categoryId: category?.id ? category.id : "",
+					abbreviation,
+					categoryName,
+					channelId: channel.id,
+					guildId: guild.id,
+					// lastVerifiedDate: Date.parse(lastVerifiedRun.status["verify-date"])
+					lastVerifiedDate: Date.parse("2021-01-23T12:12:12Z")
+				}
 			});
+
+			if (!created)
+				return channel.send("That src notification already exists.");
 
 			await this.setSrcNotifs(null, client);
 
