@@ -52,9 +52,6 @@ const src = axios.create({
 	baseURL: "https://www.speedrun.com/api/v1"
 });
 
-// !src notifcations
-// !delete src :gameName :categoryName
-
 export abstract class Src {
 	private async makeEmbeddedSrcRun({
 		players: [player],
@@ -107,6 +104,10 @@ export abstract class Src {
 		return data;
 	}
 
+	private getCategoryName(content: string): string {
+		return content.split(" ").slice(3).join(" ").toLowerCase();
+	}
+
 	private intervals: NodeJS.Timeout[] = [];
 
 	@On("ready")
@@ -147,7 +148,7 @@ export abstract class Src {
 							const message = await this.makeEmbeddedSrcRun(run);
 							// @ts-ignore
 							channel.send(message);
-							this.setSrcNotifs(command, client);
+							this.setSrcNotifs(null, client);
 						}
 					});
 				}, 60000)
@@ -155,15 +156,12 @@ export abstract class Src {
 		);
 	}
 
+	// add command !notifications
+
 	@Command("add src :abbreviation :categoryName")
 	@Guard(OnlyGuildOwner)
 	private async addSrcNotif(
-		{
-			content,
-			channel,
-			guild,
-			args: { abbreviation, categoryName }
-		}: CommandMessage,
+		{ content, channel, guild, args: { abbreviation } }: CommandMessage,
 		client: Client
 	): Promise<Message> {
 		if (!abbreviation)
@@ -182,15 +180,27 @@ export abstract class Src {
 				"The abbreviation you submitted returned no results."
 			);
 
+		const categoryName = this.getCategoryName(content);
+		const srcNotif = await SrcNewRunNotifs.findOne({
+			where: { abbreviation, categoryName, guildId: guild.id }
+		});
+
+		if (srcNotif) return channel.send("That src notification already exists.");
+
+		const srcNotifAllCategories = await SrcNewRunNotifs.findOne({
+			where: { abbreviation, guildId: guild.id }
+		});
+
+		if (srcNotifAllCategories)
+			return channel.send(
+				"You are already getting notifications for all categories."
+			);
+
 		const { uri } = game.links.find((link) => link.rel === "categories");
 		const categoryData = await axios.get<SrcResponse<SrcCategory[]>>(uri);
-		const messageAfterArgs = content
-			.split(" ")
-			.slice(3)
-			.join(" ")
-			.toLowerCase();
+
 		const category = categoryData.data.data.find(
-			(srcCategory) => srcCategory.name.toLowerCase() === messageAfterArgs
+			(srcCategory) => srcCategory.name.toLowerCase() === categoryName
 		);
 
 		const [lastVerifiedRun] = await this.getVerifiedRuns(game.id, category?.id);
@@ -199,6 +209,8 @@ export abstract class Src {
 			await SrcNewRunNotifs.create({
 				gameId: game.id,
 				categoryId: category?.id,
+				abbreviation,
+				categoryName,
 				channelId: channel.id,
 				guildId: guild.id,
 				lastVerifiedDate: Date.parse(lastVerifiedRun.status["verify-date"])
@@ -207,10 +219,9 @@ export abstract class Src {
 
 			await this.setSrcNotifs(null, client);
 
-			console.log(typeof channel);
 			channel.send(
-				`Succesfully added src notfications for ${game.names.international}${
-					category ? ` ${category.name}` : ""
+				`Succesfully added src notfications for ${abbreviation}${
+					category ? ` ${categoryName}` : ""
 					// @ts-ignore
 				} in channel ${channel.name}.`
 			);
@@ -218,5 +229,33 @@ export abstract class Src {
 			console.log(error(e));
 			channel.send("Something went wrong adding your src notification.");
 		}
+	}
+
+	@Command("delete src :abbreviation :categoryName")
+	@Guard(OnlyGuildOwner)
+	private async deleteSrcNotif({
+		content,
+		channel,
+		guild,
+		args: { abbreviation }
+	}: CommandMessage) {
+		if (!abbreviation) return channel.send("Please provide an abbreviation.");
+
+		const categoryName = this.getCategoryName(content);
+		const srcNotif = await SrcNewRunNotifs.findOne({
+			where: { abbreviation, categoryName, guildId: guild.id }
+		});
+
+		if (!srcNotif) return channel.send("That src notification doesn't exist.");
+
+		await SrcNewRunNotifs.destroy({
+			where: { id: srcNotif.id }
+		});
+
+		channel.send(
+			`Successfully deleted notfication for ${srcNotif.abbreviation}${
+				categoryName ? ` ${srcNotif.categoryName}` : ""
+			}.`
+		);
 	}
 }

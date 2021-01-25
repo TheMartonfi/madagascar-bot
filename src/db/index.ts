@@ -22,6 +22,8 @@ export interface SrcNewRunNotif extends Model {
 	id: number;
 	gameId: string;
 	categoryId?: string;
+	abbreviation: string;
+	categoryName?: string;
 	lastVerifiedDate: number;
 	channelId: string;
 	guildId: string;
@@ -64,6 +66,13 @@ export const SrcNewRunNotifs = sequelize.define<SrcNewRunNotif>(
 			allowNull: false
 		},
 		categoryId: {
+			type: STRING
+		},
+		abbreviation: {
+			type: STRING,
+			allowNull: false
+		},
+		categoryName: {
 			type: STRING
 		},
 		lastVerifiedDate: {
