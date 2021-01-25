@@ -204,13 +204,22 @@ export abstract class Src {
 				"The abbreviation you submitted returned no results."
 			);
 
-		const srcNotifs = await SrcNewRunNotifs.findOne({
+		const srcNotif = await SrcNewRunNotifs.findOne({
 			where: { abbreviation, categoryName: "", guildId: guild.id }
 		});
 
-		if (srcNotifs)
+		if (srcNotif)
 			return channel.send(
 				"You are already getting notifications for all categories."
+			);
+
+		const srcNotifs = await SrcNewRunNotifs.findAll({
+			where: { abbreviation, guildId: guild.id }
+		});
+
+		if (srcNotifs.length)
+			return channel.send(
+				"You must remove all other notifications for this game before adding all categories."
 			);
 
 		const { uri } = game.links.find((link) => link.rel === "categories");
