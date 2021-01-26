@@ -254,7 +254,7 @@ export abstract class Src {
 			await this.setSrcNotifs(null, client);
 
 			channel.send(
-				`Succesfully added src notfications for ${abbreviation}${
+				`Successfully added src notifications for ${abbreviation}${
 					category ? ` ${categoryName}` : ""
 				} in channel ${channel.type === "text" && channel.name}.`
 			);
@@ -286,7 +286,7 @@ export abstract class Src {
 		});
 
 		channel.send(
-			`Successfully deleted notfication for ${srcNotif.abbreviation}${
+			`Successfully deleted notification for ${srcNotif.abbreviation}${
 				categoryName ? ` ${srcNotif.categoryName}` : ""
 			}.`
 		);
