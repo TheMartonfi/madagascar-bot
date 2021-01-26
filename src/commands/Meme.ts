@@ -1,16 +1,58 @@
-import { Client, Command, CommandMessage, Guard } from "@typeit/discord";
-import { Message } from "discord.js";
-import { Memes } from "../db";
-import { error } from "../settings";
-import { PRIVATE_GUILD_ID } from "../settings";
-import { OnlyGuild } from "../guards/OnlyGuild";
 import {
-	formatCommandName,
-	makeMessageAttachment,
-	getMemeNames
-} from "../utils";
+	Client,
+	Command,
+	CommandMessage,
+	Guard,
+	On,
+	ArgsOf
+} from "@typeit/discord";
+import { Message, MessageAttachment } from "discord.js";
+import { Memes } from "../db";
+import { PREFIX, PRIVATE_GUILD_ID, error } from "../settings";
+import { formatCommandName } from "../utils";
+import { OnlyGuild } from "../guards/OnlyGuild";
+import { NotBot } from "../guards/NotBot";
 
 export abstract class Meme {
+	private makeMessageAttachment = (url: string): MessageAttachment | string => {
+		return url.search("discordapp") === -1 ? url : new MessageAttachment(url);
+	};
+
+	private getMemeNames = async (): Promise<string[]> => {
+		const memes = await Memes.findAll({ attributes: ["name"] });
+		return memes.map(({ name }) => PREFIX + name);
+	};
+
+	@On("message")
+	@Guard(NotBot)
+	private async memeCommands([
+		{ content, channel }
+	]: ArgsOf<"commandMessage">): Promise<void> {
+		try {
+			if (content[0] !== PREFIX) return;
+			// or if content is a command name
+
+			const formattedCommandName = formatCommandName(content);
+			const meme = await Memes.findOne({
+				where: { name: formattedCommandName }
+			});
+
+			if (!meme) return;
+
+			channel.send(this.makeMessageAttachment(meme.message));
+		} catch (e) {
+			console.log(error(e));
+		}
+	}
+
+	@Command("memes")
+	private async memes({ channel }: CommandMessage): Promise<Message> {
+		const memeNames = await this.getMemeNames();
+
+		if (memeNames.length) return channel.send(memeNames.join(", "));
+		channel.send("No memes were found.");
+	}
+
 	@Command("search meme :name")
 	private async searchMeme({
 		channel,
@@ -19,17 +61,17 @@ export abstract class Meme {
 		const results: string[] = [];
 		const formattedName = formatCommandName(name);
 
-		const memeNames = await getMemeNames();
+		const memeNames = await this.getMemeNames();
 		memeNames.forEach((name) => {
 			if (name.search(formattedName) === -1) return;
-			results.push(formatCommandName(name));
+			results.push(formatCommandName(PREFIX + name));
 		});
 
 		if (results.length > 1) {
 			channel.send(`Found ${results.length} memes: ${results.join(", ")}`);
 		} else if (results.length === 1) {
 			const meme = await Memes.findOne({ where: { name: results[0] } });
-			channel.send(makeMessageAttachment(meme.message));
+			channel.send(this.makeMessageAttachment(meme.message));
 		} else {
 			channel.send("Meme not found.");
 		}
@@ -58,12 +100,12 @@ export abstract class Meme {
 			if (!message) return channel.send("Meme cannot be empty.");
 
 			const meme = await Memes.create({ name: formattedName, message });
-			channel.send(`Meme ${meme.name} successfully added.`);
+			channel.send(`Meme ${PREFIX + meme.name} successfully added.`);
 		} catch (e) {
 			if (e.name === "SequelizeUniqueConstraintError") {
-				channel.send("That meme already exists.");
+				channel.send("That meme name already exists.");
 			} else {
-				channel.send(`There was an error adding ${formattedName}.`);
+				channel.send(`There was an error adding ${PREFIX + formattedName}.`);
 				console.log(error(e));
 			}
 		}
@@ -84,13 +126,17 @@ export abstract class Meme {
 				{ where: { name: formattedOldName } }
 			);
 			channel.send(
-				`Successfully updated ${formattedOldName} to ${formattedNewName}.`
+				`Successfully updated ${PREFIX + formattedOldName} to ${
+					PREFIX + formattedNewName
+				}.`
 			);
 		} catch (e) {
 			if (e.name === "SequelizeUniqueConstraintError") {
 				channel.send("That meme already exists.");
 			} else {
-				channel.send(`There was an error updating ${formattedOldName}.`);
+				channel.send(
+					`There was an error updating ${PREFIX + formattedOldName}.`
+				);
 				console.log(error(e));
 			}
 		}
@@ -107,6 +153,6 @@ export abstract class Meme {
 		const rowCount = await Memes.destroy({ where: { name: formattedName } });
 		if (!rowCount) return channel.send("That meme didn't exist.");
 
-		return channel.send(`Meme ${formattedName} succesfully deleted.`);
+		return channel.send(`Meme ${PREFIX + formattedName} successfully deleted.`);
 	}
 }

@@ -5,49 +5,18 @@ import {
 	Command,
 	CommandMessage,
 	On,
-	Guard,
 	ArgsOf
 } from "@typeit/discord";
-import { Message } from "discord.js";
-import { Memes } from "./db";
-import { error } from "./settings";
 import { PREFIX } from "./settings";
-import {
-	formatCommandName,
-	makeMessageAttachment,
-	getMemeNames
-} from "./utils";
-import { NotBot } from "./guards/NotBot";
 
+// Dynamically import private commands/features
 @Discord(PREFIX, {
 	import: [`${__dirname}/commands/*.js`, `${__dirname}/events/*.js`]
 })
 export abstract class DiscordApp {
 	@On("ready")
-	private setActivity(command: ArgsOf<"ready">, client: Client) {
-		client.user.setActivity("!help");
-	}
-
-	@On("message")
-	@Guard(NotBot)
-	private async memeCommands([
-		{ content, channel }
-	]: ArgsOf<"commandMessage">): Promise<void> {
-		try {
-			if (content[0] !== PREFIX) return;
-			// or if content is a command name
-
-			const formattedCommandName = formatCommandName(content);
-			const meme = await Memes.findOne({
-				where: { name: formattedCommandName }
-			});
-
-			if (!meme) return;
-
-			channel.send(makeMessageAttachment(meme.message));
-		} catch (e) {
-			console.log(error(e));
-		}
+	private setActivity(command: ArgsOf<"ready">, { user }: Client) {
+		user.setActivity("!help");
 	}
 
 	@Command("commands")
@@ -78,13 +47,5 @@ export abstract class DiscordApp {
 				})
 				.join("\n")
 		);
-	}
-
-	@Command("memes")
-	private async memes({ channel }: CommandMessage): Promise<Message> {
-		const memeNames = await getMemeNames();
-
-		if (memeNames.length) return channel.send(memeNames.join(", "));
-		channel.send("No memes were found.");
 	}
 }
