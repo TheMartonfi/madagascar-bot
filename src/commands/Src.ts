@@ -220,14 +220,15 @@ export abstract class Src {
 			where: { abbreviation, guildId: guild.id }
 		});
 
-		if (srcNotifs.length)
+		const categoryName = this.getCategoryName(content);
+
+		if (srcNotifs.length && !categoryName)
 			return channel.send(
 				"You must remove all other notifications for this game before adding all categories."
 			);
 
 		const { uri } = game.links.find((link) => link.rel === "categories");
 		const categoryData = await axios.get<SrcResponse<SrcCategory[]>>(uri);
-		const categoryName = this.getCategoryName(content);
 
 		const category = categoryData.data.data.find(
 			(srcCategory) => srcCategory.name.toLowerCase() === categoryName
