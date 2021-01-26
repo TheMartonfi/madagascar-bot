@@ -30,9 +30,13 @@ export abstract class Meme {
 	]: ArgsOf<"commandMessage">): Promise<void> {
 		try {
 			if (content[0] !== PREFIX) return;
-			// or if content is a command name
 
 			const formattedCommandName = formatCommandName(content);
+
+			for (const { commandName } of Client.getCommands()) {
+				if (formattedCommandName === commandName) return;
+			}
+
 			const meme = await Memes.findOne({
 				where: { name: formattedCommandName }
 			});
@@ -116,20 +120,30 @@ export abstract class Meme {
 	private async editMeme({
 		channel,
 		args: { oldName, newName }
-	}: CommandMessage): Promise<void> {
+	}: CommandMessage): Promise<Message> {
+		if (!oldName)
+			return channel.send(
+				"Please provide the name of the meme you want to edit."
+			);
+		if (!newName) return channel.send("Please provide a new name.");
+
 		const formattedOldName = formatCommandName(oldName);
 		const formattedNewName = formatCommandName(newName);
 
 		try {
-			await Memes.update(
+			const [updateCount] = await Memes.update(
 				{ name: formattedNewName },
 				{ where: { name: formattedOldName } }
 			);
-			channel.send(
-				`Successfully updated ${PREFIX + formattedOldName} to ${
-					PREFIX + formattedNewName
-				}.`
-			);
+
+			if (updateCount)
+				return channel.send(
+					`Successfully updated ${PREFIX + formattedOldName} to ${
+						PREFIX + formattedNewName
+					}.`
+				);
+
+			channel.send("That meme doesn't exist.");
 		} catch (e) {
 			if (e.name === "SequelizeUniqueConstraintError") {
 				channel.send("That meme already exists.");
@@ -148,8 +162,9 @@ export abstract class Meme {
 		channel,
 		args: { name }
 	}: CommandMessage): Promise<Message> {
-		const formattedName = formatCommandName(name);
+		if (!name) return channel.send("Please provide a name.");
 
+		const formattedName = formatCommandName(name);
 		const rowCount = await Memes.destroy({ where: { name: formattedName } });
 		if (!rowCount) return channel.send("That meme didn't exist.");
 
