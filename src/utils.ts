@@ -15,7 +15,5 @@ export const makeMessageAttachment = (
 
 export const getMemeNames = async (): Promise<string[]> => {
 	const memes = await Memes.findAll({ attributes: ["name"] });
-	const memeNames = memes.map(({ name }) => PREFIX + name);
-
-	return memeNames;
+	return memes.map(({ name }) => PREFIX + name);
 };

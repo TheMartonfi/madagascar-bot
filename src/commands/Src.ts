@@ -7,7 +7,7 @@ import {
 	ArgsOf
 } from "@typeit/discord";
 import axios from "axios";
-import { Message, MessageEmbed } from "discord.js";
+import { Message, MessageEmbed, TextChannel } from "discord.js";
 import { OnlyGuildOwner } from "../guards/OnlyGuildOwner";
 import { SrcNewRunNotifs } from "../db";
 import { error } from "../settings";
@@ -130,29 +130,32 @@ export abstract class Src {
 			this.intervals.shift();
 		});
 
-		srcNotifs.map(({ id, gameId, categoryId, channelId, lastVerifiedDate }) =>
-			this.intervals.push(
-				setInterval(async () => {
-					const runs = await this.getVerifiedRuns(gameId, categoryId);
+		srcNotifs.forEach(
+			({ id, gameId, categoryId, channelId, lastVerifiedDate }) =>
+				this.intervals.push(
+					setInterval(async () => {
+						const runs = await this.getVerifiedRuns(gameId, categoryId);
 
-					runs.reverse().forEach(async (run) => {
-						const verifiedDate = Date.parse(run.status["verify-date"]);
+						runs.reverse().forEach(async (run) => {
+							const verifiedDate = Date.parse(run.status["verify-date"]);
 
-						if (verifiedDate > lastVerifiedDate) {
-							await SrcNewRunNotifs.update(
-								{ lastVerifiedDate: verifiedDate },
-								{ where: { id } }
-							);
+							if (verifiedDate > lastVerifiedDate) {
+								await SrcNewRunNotifs.update(
+									{ lastVerifiedDate: verifiedDate },
+									{ where: { id } }
+								);
 
-							const channel = await client.channels.fetch(channelId);
-							const message = await this.makeEmbeddedSrcRun(run);
-							// @ts-ignore
-							channel.send(message);
-							this.setSrcNotifs(null, client);
-						}
-					});
-				}, 60000)
-			)
+								const channel = (await client.channels.fetch(
+									channelId
+								)) as TextChannel;
+
+								const message = await this.makeEmbeddedSrcRun(run);
+								channel.send(message);
+								this.setSrcNotifs(null, client);
+							}
+						});
+					}, 60000)
+				)
 		);
 	}
 
@@ -253,8 +256,7 @@ export abstract class Src {
 			channel.send(
 				`Succesfully added src notfications for ${abbreviation}${
 					category ? ` ${categoryName}` : ""
-					// @ts-ignore
-				} in channel ${channel.name}.`
+				} in channel ${channel.type === "text" && channel.name}.`
 			);
 		} catch (e) {
 			console.log(error(e));
