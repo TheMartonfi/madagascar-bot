@@ -5,12 +5,14 @@ import {
 	DB_MIGRATE,
 	DB_SEED,
 	DB_RESET,
-	RICO_TRIGGER
+	RICO_TRIGGER,
+	PRIVATE_GUILD_ID
 } from "../settings";
 
 export interface Meme extends Model {
 	name: string;
 	message: string;
+	guildId: string;
 }
 
 export interface WordCount extends Model {
@@ -36,11 +38,14 @@ const sequelize = new Sequelize(DATABASE_URL, {
 export const Memes = sequelize.define<Meme>("memes", {
 	name: {
 		type: STRING,
-		unique: true,
 		allowNull: false
 	},
 	message: {
 		type: TEXT,
+		allowNull: false
+	},
+	guildId: {
+		type: STRING,
 		allowNull: false
 	}
 });
@@ -103,13 +108,15 @@ const syncSequelize = async () => {
 		// Public feature
 		await Memes.create({
 			name: "test",
-			message: "test meme"
+			message: "test meme",
+			guildId: PRIVATE_GUILD_ID
 		});
 
 		await Memes.create({
 			name: "file",
 			message:
-				"https://cdn.discordapp.com/attachments/799012670899879986/801619938623619112/He_He_He_Yup_1.mp4"
+				"https://cdn.discordapp.com/attachments/799012670899879986/801619938623619112/He_He_He_Yup_1.mp4",
+			guildId: PRIVATE_GUILD_ID
 		});
 	}
 

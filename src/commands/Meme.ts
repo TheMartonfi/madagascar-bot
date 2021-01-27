@@ -10,7 +10,6 @@ import { Message, MessageAttachment } from "discord.js";
 import { Memes } from "../db";
 import { PREFIX, PRIVATE_GUILD_ID, error } from "../settings";
 import { formatCommandName } from "../utils";
-import { OnlyGuild } from "../guards/OnlyGuild";
 import { NotBot } from "../guards/NotBot";
 
 export abstract class Meme {
@@ -18,27 +17,44 @@ export abstract class Meme {
 		return url.search("discordapp") === -1 ? url : new MessageAttachment(url);
 	};
 
-	private getMemeNames = async (): Promise<string[]> => {
-		const memes = await Memes.findAll({ attributes: ["name"] });
+	private getMemeNames = async (guildId: string): Promise<string[]> => {
+		const memes = await Memes.findAll({
+			where: { guildId },
+			attributes: ["name"]
+		});
 		return memes.map(({ name }) => PREFIX + name);
 	};
 
+	private isCommandName(name: string) {
+		for (const { commandName } of Client.getCommands()) {
+			if (commandName === name) return true;
+		}
+
+		return false;
+	}
+
 	@On("message")
 	@Guard(NotBot)
-	private async memeCommands([
-		{ content, channel }
-	]: ArgsOf<"commandMessage">): Promise<void> {
+	private async memeCommands(
+		[{ content, channel, guild, member }]: ArgsOf<"commandMessage">,
+		client: Client
+	): Promise<void> {
 		try {
 			if (content[0] !== PREFIX) return;
 
 			const formattedCommandName = formatCommandName(content);
 
-			for (const { commandName } of Client.getCommands()) {
-				if (formattedCommandName === commandName) return;
-			}
+			if (this.isCommandName(formattedCommandName)) return;
+
+			// Allow users from private guild to use our guild memes everywhere
+			const privateGuild = await client.guilds.fetch(PRIVATE_GUILD_ID);
+			const privateMember = await privateGuild.members.fetch(member.id);
 
 			const meme = await Memes.findOne({
-				where: { name: formattedCommandName }
+				where: {
+					name: formattedCommandName,
+					guildId: privateMember ? PRIVATE_GUILD_ID : guild.id
+				}
 			});
 
 			if (!meme) return;
@@ -50,8 +66,8 @@ export abstract class Meme {
 	}
 
 	@Command("memes")
-	private async memes({ channel }: CommandMessage): Promise<Message> {
-		const memeNames = await this.getMemeNames();
+	private async memes({ channel, guild }: CommandMessage): Promise<Message> {
+		const memeNames = await this.getMemeNames(guild.id);
 
 		if (memeNames.length) return channel.send(memeNames.join(", "));
 		channel.send("No memes were found.");
@@ -60,12 +76,13 @@ export abstract class Meme {
 	@Command("search meme :name")
 	private async searchMeme({
 		channel,
+		guild,
 		args: { name }
 	}: CommandMessage): Promise<void> {
 		const results: string[] = [];
 		const formattedName = formatCommandName(name);
 
-		const memeNames = await this.getMemeNames();
+		const memeNames = await this.getMemeNames(guild.id);
 		memeNames.forEach((name) => {
 			if (name.search(formattedName) === -1) return;
 			results.push(formatCommandName(PREFIX + name));
@@ -74,7 +91,9 @@ export abstract class Meme {
 		if (results.length > 1) {
 			channel.send(`Found ${results.length} memes: ${results.join(", ")}`);
 		} else if (results.length === 1) {
-			const meme = await Memes.findOne({ where: { name: results[0] } });
+			const meme = await Memes.findOne({
+				where: { name: results[0].slice(1) }
+			});
 			channel.send(this.makeMessageAttachment(meme.message));
 		} else {
 			channel.send("Meme not found.");
@@ -82,20 +101,18 @@ export abstract class Meme {
 	}
 
 	@Command("add meme :name :file")
-	@Guard(OnlyGuild(PRIVATE_GUILD_ID))
 	private async addMeme({
 		content,
 		channel,
+		guild,
 		attachments,
 		args: { name }
 	}: CommandMessage): Promise<Message> {
-		const formattedName = formatCommandName(name);
+		const formattedCommandName = formatCommandName(name);
 		const messageAfterArgs = content.split(" ").slice(3).join(" ");
 
-		for (const { commandName } of Client.getCommands()) {
-			if (commandName === formattedName)
-				return channel.send("Meme name cannot be a command name.");
-		}
+		if (this.isCommandName(formattedCommandName))
+			return channel.send("Meme name cannot be a command name.");
 
 		const attachmentUrl = attachments.first()?.url;
 		const message = attachmentUrl ? attachmentUrl : messageAfterArgs;
@@ -103,22 +120,37 @@ export abstract class Meme {
 		try {
 			if (!message) return channel.send("Meme cannot be empty.");
 
-			const meme = await Memes.create({ name: formattedName, message });
+			const [meme, created] = await Memes.findOrCreate({
+				where: {
+					name: formattedCommandName,
+					guildId: guild.id
+				},
+				defaults: {
+					name: formattedCommandName,
+					message,
+					guildId: guild.id
+				}
+			});
+
+			if (!created) return channel.send("This meme name already exists.");
+
 			channel.send(`Meme ${PREFIX + meme.name} successfully added.`);
 		} catch (e) {
 			if (e.name === "SequelizeUniqueConstraintError") {
 				channel.send("That meme name already exists.");
 			} else {
-				channel.send(`There was an error adding ${PREFIX + formattedName}.`);
+				channel.send(
+					`There was an error adding ${PREFIX + formattedCommandName}.`
+				);
 				console.log(error(e));
 			}
 		}
 	}
 
 	@Command("edit meme :oldName :newName")
-	@Guard(OnlyGuild(PRIVATE_GUILD_ID))
 	private async editMeme({
 		channel,
+		guild,
 		args: { oldName, newName }
 	}: CommandMessage): Promise<Message> {
 		if (!oldName)
@@ -133,7 +165,7 @@ export abstract class Meme {
 		try {
 			const [updateCount] = await Memes.update(
 				{ name: formattedNewName },
-				{ where: { name: formattedOldName } }
+				{ where: { name: formattedOldName, guildId: guild.id } }
 			);
 
 			if (updateCount)
@@ -157,15 +189,17 @@ export abstract class Meme {
 	}
 
 	@Command("delete meme :name")
-	@Guard(OnlyGuild(PRIVATE_GUILD_ID))
 	private async deleteMeme({
 		channel,
+		guild,
 		args: { name }
 	}: CommandMessage): Promise<Message> {
 		if (!name) return channel.send("Please provide a name.");
 
 		const formattedName = formatCommandName(name);
-		const rowCount = await Memes.destroy({ where: { name: formattedName } });
+		const rowCount = await Memes.destroy({
+			where: { name: formattedName, guildId: guild.id }
+		});
 		if (!rowCount) return channel.send("That meme didn't exist.");
 
 		return channel.send(`Meme ${PREFIX + formattedName} successfully deleted.`);
