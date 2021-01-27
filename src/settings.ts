@@ -6,6 +6,7 @@ export const PREFIX = process.env.PREFIX || "!";
 export const DB_MIGRATE = process.env.DB_MIGRATE ? true : false;
 export const DB_SEED = process.env.DB_SEED ? true : false;
 export const DB_RESET = process.env.DB_RESET ? true : false;
+export const MEMES_GUILD_ID = process.env.MEMES_GUILD_ID ? true : false;
 
 export const { ENV } = process.env;
 export const { DATABASE_URL } = process.env;

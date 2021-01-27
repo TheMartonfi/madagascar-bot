@@ -129,7 +129,7 @@ export abstract class Meme {
 				where: memeValues,
 				defaults: {
 					...memeValues,
-					guildId: guild.id
+					message
 				}
 			});
 
@@ -137,14 +137,10 @@ export abstract class Meme {
 
 			channel.send(`Meme ${PREFIX + meme.name} successfully added.`);
 		} catch (e) {
-			if (e.name === "SequelizeUniqueConstraintError") {
-				channel.send("That meme name already exists.");
-			} else {
-				channel.send(
-					`There was an error adding ${PREFIX + formattedCommandName}.`
-				);
-				console.log(error(e));
-			}
+			console.log(error(e));
+			channel.send(
+				`There was an error adding ${PREFIX + formattedCommandName}.`
+			);
 		}
 	}
 
@@ -178,14 +174,8 @@ export abstract class Meme {
 
 			channel.send("That meme doesn't exist.");
 		} catch (e) {
-			if (e.name === "SequelizeUniqueConstraintError") {
-				channel.send("That meme already exists.");
-			} else {
-				channel.send(
-					`There was an error updating ${PREFIX + formattedOldName}.`
-				);
-				console.log(error(e));
-			}
+			console.log(error(e));
+			channel.send(`There was an error updating ${PREFIX + formattedOldName}.`);
 		}
 	}
 

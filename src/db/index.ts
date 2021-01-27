@@ -6,16 +6,19 @@ import {
 	DB_SEED,
 	DB_RESET,
 	RICO_TRIGGER,
-	PRIVATE_GUILD_ID
+	PRIVATE_GUILD_ID,
+	MEMES_GUILD_ID
 } from "../settings";
 
 export interface Meme extends Model {
+	id: number;
 	name: string;
 	message: string;
 	guildId: string;
 }
 
 export interface WordCount extends Model {
+	id: number;
 	word: string;
 	count: number;
 }
@@ -108,15 +111,33 @@ const syncSequelize = async () => {
 		// Public feature
 		await Memes.create({
 			name: "test",
-			message: "test meme",
-			guildId: PRIVATE_GUILD_ID
+			message: "test meme"
+			// guildId: PRIVATE_GUILD_ID
 		});
 
 		await Memes.create({
 			name: "file",
 			message:
-				"https://cdn.discordapp.com/attachments/799012670899879986/801619938623619112/He_He_He_Yup_1.mp4",
-			guildId: PRIVATE_GUILD_ID
+				"https://cdn.discordapp.com/attachments/799012670899879986/801619938623619112/He_He_He_Yup_1.mp4"
+			// guildId: PRIVATE_GUILD_ID
+		});
+	}
+
+	if (MEMES_GUILD_ID) {
+		await sequelize.sync({ alter: true });
+
+		let wait = 1000;
+		const allMemes = await Memes.findAll();
+
+		allMemes.forEach((meme) => {
+			setTimeout(async () => {
+				console.log("Adding guild id");
+				await Memes.update(
+					{ guildId: PRIVATE_GUILD_ID },
+					{ where: { id: meme.id } }
+				);
+				wait += 1000;
+			}, wait);
 		});
 	}
 
