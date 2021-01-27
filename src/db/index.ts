@@ -48,8 +48,8 @@ export const Memes = sequelize.define<Meme>("memes", {
 		allowNull: false
 	},
 	guildId: {
-		type: STRING,
-		allowNull: false
+		type: STRING
+		// allowNull: false
 	}
 });
 
