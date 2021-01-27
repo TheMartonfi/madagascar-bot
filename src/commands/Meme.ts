@@ -120,14 +120,15 @@ export abstract class Meme {
 		try {
 			if (!message) return channel.send("Meme cannot be empty.");
 
+			const memeValues = {
+				name: formattedCommandName,
+				guildId: guild.id
+			};
+
 			const [meme, created] = await Memes.findOrCreate({
-				where: {
-					name: formattedCommandName,
-					guildId: guild.id
-				},
+				where: memeValues,
 				defaults: {
-					name: formattedCommandName,
-					message,
+					...memeValues,
 					guildId: guild.id
 				}
 			});

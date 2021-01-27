@@ -237,22 +237,19 @@ export abstract class Src {
 		const [lastVerifiedRun] = await this.getVerifiedRuns(game.id, category?.id);
 
 		try {
+			const srcNotifValues = {
+				gameId: game.id,
+				categoryId: category?.id ? category.id : "",
+				abbreviation,
+				categoryName,
+				channelId: channel.id,
+				guildId: guild.id
+			};
+
 			const [srcNotif, created] = await SrcNewRunNotifs.findOrCreate({
-				where: {
-					gameId: game.id,
-					categoryId: category?.id ? category.id : "",
-					abbreviation,
-					categoryName,
-					channelId: channel.id,
-					guildId: guild.id
-				},
+				where: srcNotifValues,
 				defaults: {
-					gameId: game.id,
-					categoryId: category?.id ? category.id : "",
-					abbreviation,
-					categoryName,
-					channelId: channel.id,
-					guildId: guild.id,
+					...srcNotifValues,
 					lastVerifiedDate: Date.parse(lastVerifiedRun.status["verify-date"])
 				}
 			});
