@@ -160,7 +160,10 @@ export abstract class Meme {
 		const formattedNewName = formatCommandName(newName);
 
 		try {
-			const meme = await Memes.findOne({ where: { name: formattedOldName } });
+			const meme = await Memes.findOne({
+				where: { name: formattedOldName, guildId: guild.id }
+			});
+
 			if (meme) return channel.send("That meme name already exists.");
 
 			const [updateCount] = await Memes.update(
