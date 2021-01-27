@@ -244,6 +244,14 @@ export abstract class Src {
 					abbreviation,
 					categoryName,
 					channelId: channel.id,
+					guildId: guild.id
+				},
+				defaults: {
+					gameId: game.id,
+					categoryId: category?.id ? category.id : "",
+					abbreviation,
+					categoryName,
+					channelId: channel.id,
 					guildId: guild.id,
 					lastVerifiedDate: Date.parse(lastVerifiedRun.status["verify-date"])
 				}
