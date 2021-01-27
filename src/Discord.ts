@@ -9,7 +9,6 @@ import {
 } from "@typeit/discord";
 import { PREFIX } from "./settings";
 
-// Dynamically import private commands/features
 @Discord(PREFIX, {
 	import: [`${__dirname}/commands/*.js`, `${__dirname}/events/*.js`]
 })
