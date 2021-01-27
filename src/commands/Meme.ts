@@ -92,7 +92,7 @@ export abstract class Meme {
 			channel.send(`Found ${results.length} memes: ${results.join(", ")}`);
 		} else if (results.length === 1) {
 			const meme = await Memes.findOne({
-				where: { name: results[0].slice(1) }
+				where: { name: results[0].slice(1), guildId: guild.id }
 			});
 			channel.send(this.makeMessageAttachment(meme.message));
 		} else {
