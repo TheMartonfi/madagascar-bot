@@ -6,7 +6,7 @@ import {
 	DB_SEED,
 	DB_RESET,
 	RICO_TRIGGER,
-	PRIVATE_GUILD_ID,
+	PRIVATE_GUILD_ID
 } from "../settings";
 
 export interface Meme extends Model {
@@ -47,7 +47,7 @@ export const Memes = sequelize.define<Meme>("memes", {
 		allowNull: false
 	},
 	guildId: {
-		type: STRING
+		type: STRING,
 		allowNull: false
 	}
 });
