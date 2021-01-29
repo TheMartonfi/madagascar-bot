@@ -27,27 +27,27 @@ Use this link to invite the bot to the server of your choice: https://discord.co
 
 - `!edit meme "oldName" "newName"` Modifies the name of an existing meme command.
 
-  !['Edit meme'](https://github.com/TheMartonfi/madagascar-bot/blob/documentation/docs/Edit%20meme.png?raw=true)
+  !['Edit meme'](https://github.com/TheMartonfi/madagascar-bot/blob/master/docs/Edit%20meme.png?raw=true)
 
 - `!delete meme "name"` Deletes meme if it exists.
 
-  !['Delete meme'](https://github.com/TheMartonfi/madagascar-bot/blob/documentation/docs/Delete%20meme.png?raw=true)
+  !['Delete meme'](https://github.com/TheMartonfi/madagascar-bot/blob/master/docs/Delete%20meme.png?raw=true)
 
 - `!search meme "name"` Returns a list of meme names matching the search term. The bot will invoke the meme command if it only returns one result.
 
-  !['Search meme'](https://github.com/TheMartonfi/madagascar-bot/blob/documentation/docs/Search%20meme.png?raw=true)
+  !['Search meme'](https://github.com/TheMartonfi/madagascar-bot/blob/master/docs/Search%20meme.png?raw=true)
 
 - `!notifications` Lists all current speedrun.com notifications.
 
 - `!add src "abbreviation" "categoryName"` Adds notifications in current channel for all new verified runs from src. If the category name is omitted you will be getting notifications for all categories for the game. The src abbreviation can be found by navigating to the leaderboard page on src and looking at the last word in the url. For the game Banjo-Kazooie the url looks like this: https://www.speedrun.com/bk and the abbreviation is bk. Please keep in mind to prevent duplicate notifications that you can only add all game category notifications if you are not currently getting notifications for a specific category of that game.
 
-  !['Add src'](https://github.com/TheMartonfi/madagascar-bot/blob/documentation/docs/Add%20src.png?raw=true)  
-  !['Duplicate src'](https://github.com/TheMartonfi/madagascar-bot/blob/documentation/docs/Src%20duplicate.png?raw=true)
+  !['Add src'](https://github.com/TheMartonfi/madagascar-bot/blob/master/docs/Add%20src.png?raw=true)  
+  !['Duplicate src'](https://github.com/TheMartonfi/madagascar-bot/blob/master/docs/Src%20duplicate.png?raw=true)
 
 - `!delete src "abbreviation" "categoryName` Deletes src notification if it exists.
 
-!['Delete src']()
+!['Delete src'](https://github.com/TheMartonfi/madagascar-bot/blob/master/docs/Delete%20src.png?raw=true)
 
 - Example notification for a new run.
 
-!['Src notification'](https://github.com/TheMartonfi/madagascar-bot/blob/documentation/docs/Src%20notification.png?raw=true)
+!['Src notification'](https://github.com/TheMartonfi/madagascar-bot/blob/master/docs/Src%20notification.png?raw=true)
