@@ -161,13 +161,13 @@ export abstract class Meme {
 
 		try {
 			const meme = await Memes.findOne({
-				where: { name: formattedOldName, guildId: guild.id }
+				where: { name: formattedNewName, guildId: guild.id }
 			});
 
 			if (meme) return channel.send("That meme name already exists.");
 
 			const [updateCount] = await Memes.update(
-				{ id: meme.id },
+				{ name: formattedNewName },
 				{ where: { name: formattedOldName, guildId: guild.id } }
 			);
 

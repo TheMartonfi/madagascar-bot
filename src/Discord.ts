@@ -18,6 +18,11 @@ export abstract class DiscordApp {
 		user.setActivity("!help");
 	}
 
+	@Command("help")
+	private help({ channel }: CommandMessage): void {
+		channel.send("https://github.com/TheMartonfi/madagascar-bot");
+	}
+
 	@Command("commands")
 	private commands({ channel }: CommandMessage): void {
 		const privateCommands = ["commands", "count"];
