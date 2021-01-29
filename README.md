@@ -21,7 +21,7 @@ Use this link to invite the bot to the server of your choice: https://discord.co
 
 - `!memes` Lists all memes for the server.
 
-- `!add meme "name" "file"` The "name" argument will be the command name for the meme, the file argument should either be a string of text or a file upload.
+- `!add meme "name" "file"` The "name" argument will be the command name for the meme, the "file" argument should either be a string of text or a file upload.
 
   !['Add meme'](https://github.com/TheMartonfi/madagascar-bot/blob/master/docs/Add%20meme.png?raw=true)
 
