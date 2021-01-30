@@ -44,7 +44,7 @@ Use this link to invite the bot to the server of your choice: https://discord.co
   !['Add src'](https://github.com/TheMartonfi/madagascar-bot/blob/master/docs/Add%20src.png?raw=true)  
   !['Duplicate src'](https://github.com/TheMartonfi/madagascar-bot/blob/master/docs/Src%20duplicate.png?raw=true)
 
-- `!delete src "abbreviation" "categoryName` Deletes src notification if it exists.
+- `!delete src "abbreviation" "categoryName"` Deletes src notification if it exists.
 
 !['Delete src'](https://github.com/TheMartonfi/madagascar-bot/blob/master/docs/Delete%20src.png?raw=true)
 
