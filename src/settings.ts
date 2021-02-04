@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-import chalk from "chalk";
 dotenv.config();
 
 export const PREFIX = process.env.PREFIX || "!";
@@ -16,6 +15,6 @@ export const { RICO_USER_ID } = process.env;
 export const { RICO_TRIGGER } = process.env;
 export const { RICO_ROOM_ID } = process.env;
 
-export const info = chalk.blue;
-export const sql = chalk.yellow;
-export const error = chalk.red;
+export const blue = "\x1b[34m%s\x1b[0m";
+export const yellow = "\x1b[33m%s\x1b[0m";
+export const red = "\x1b[31m%s\x1b[0m";

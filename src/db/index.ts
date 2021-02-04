@@ -1,6 +1,6 @@
 import { Sequelize, Model, STRING, TEXT, INTEGER, BIGINT } from "sequelize";
 import {
-	sql,
+	yellow,
 	DATABASE_URL,
 	DB_MIGRATE,
 	DB_SEED,
@@ -34,7 +34,7 @@ export interface SrcNewRunNotif extends Model {
 }
 
 const sequelize = new Sequelize(DATABASE_URL, {
-	logging: (query: string) => console.log(sql(query))
+	logging: (query: string) => console.log(yellow, query)
 });
 
 export const Memes = sequelize.define<Meme>("memes", {

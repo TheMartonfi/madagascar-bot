@@ -10,7 +10,7 @@ import axios from "axios";
 import { Message, MessageEmbed, TextChannel } from "discord.js";
 import { OnlyGuildOwner } from "../guards/OnlyGuildOwner";
 import { SrcNewRunNotifs } from "../db";
-import { error } from "../settings";
+import { red } from "../settings";
 
 interface SrcResponse<T> {
 	data: T;
@@ -265,7 +265,7 @@ export abstract class Src {
 				} in channel ${channel.type === "text" && channel.name}.`
 			);
 		} catch (e) {
-			console.log(error(e));
+			console.log(red, e);
 			channel.send("Something went wrong adding your src notification.");
 		}
 	}

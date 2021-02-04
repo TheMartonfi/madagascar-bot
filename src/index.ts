@@ -1,6 +1,6 @@
 import { Client } from "@typeit/discord";
 import { BOT_TOKEN } from "./settings";
-import { info } from "./settings";
+import { blue } from "./settings";
 
 const start = async (): Promise<void> => {
 	const client = new Client({
@@ -10,7 +10,7 @@ const start = async (): Promise<void> => {
 	});
 
 	await client.login(BOT_TOKEN);
-	console.log(info("Bot gracefully logged in."));
+	console.log(blue, "Bot gracefully logged in.");
 };
 
 start();

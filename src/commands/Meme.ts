@@ -8,7 +8,7 @@ import {
 } from "@typeit/discord";
 import { Message, MessageAttachment } from "discord.js";
 import { Memes } from "../db";
-import { PREFIX, PRIVATE_GUILD_ID, error } from "../settings";
+import { PREFIX, PRIVATE_GUILD_ID, red } from "../settings";
 import { formatCommandName } from "../utils";
 import { NotBot } from "../guards/NotBot";
 
@@ -61,7 +61,7 @@ export abstract class Meme {
 
 			channel.send(this.makeMessageAttachment(meme.message));
 		} catch (e) {
-			console.log(error(e));
+			console.log(red, e);
 		}
 	}
 
@@ -137,7 +137,7 @@ export abstract class Meme {
 
 			channel.send(`Meme ${PREFIX + meme.name} successfully added.`);
 		} catch (e) {
-			console.log(error(e));
+			console.log(red, e);
 			channel.send(
 				`There was an error adding ${PREFIX + formattedCommandName}.`
 			);
@@ -180,7 +180,7 @@ export abstract class Meme {
 
 			channel.send("That meme doesn't exist.");
 		} catch (e) {
-			console.log(error(e));
+			console.log(red, e);
 			channel.send(`There was an error updating ${PREFIX + formattedOldName}.`);
 		}
 	}
