@@ -79,7 +79,7 @@ export abstract class Src {
 			.substr(11, 8);
 
 		return new MessageEmbed()
-			.setAuthor("Speedrun.com", gameIconUrl)
+			.setAuthor("speedrun.com", gameIconUrl)
 			.setTitle(`${playerName} got a ${time} in ${gameName} ${categoryName}!`)
 			.setDescription(weblink)
 			.setFooter(`Run Comment: ${comment}`);
