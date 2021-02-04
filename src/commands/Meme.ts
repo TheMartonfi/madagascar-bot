@@ -87,12 +87,12 @@ export abstract class Meme {
 			return count;
 		}, 0);
 
+		console.log(characterCount);
 		if (characterCount < maxCharacterCount)
 			return channel.send(memeNames.join(", "));
 
 		const splitMemeNames = memeNames.slice(0, indexToSlice);
 		const restMemeNames = memeNames.slice(indexToSlice);
-		console.log(characterCount);
 
 		channel.send(splitMemeNames.join(", "));
 		this.memes(command, client, emptyObject, restMemeNames);
