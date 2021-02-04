@@ -81,13 +81,12 @@ export abstract class Meme {
 
 		let indexToSlice: number;
 		const characterCount = memeNames.reduce((acc, curr, currIndex) => {
-			const count = acc + curr.length;
+			const count = acc + curr.length + 2;
 			if (count > maxCharacterCount && !indexToSlice) indexToSlice = currIndex;
 
 			return count;
 		}, 0);
 
-		console.log(characterCount);
 		if (characterCount < maxCharacterCount)
 			return channel.send(memeNames.join(", "));
 
