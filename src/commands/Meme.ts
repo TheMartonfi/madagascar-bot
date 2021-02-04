@@ -75,7 +75,6 @@ export abstract class Meme {
 		const { channel, guild } = command;
 
 		const memeNames = moreMemeNames || (await this.getMemeNames(guild.id));
-		console.log(memeNames);
 
 		if (!memeNames.length) return channel.send("No memes were found.");
 		const maxCharacterCount = 2000;
@@ -93,6 +92,7 @@ export abstract class Meme {
 
 		const splitMemeNames = memeNames.slice(0, indexToSlice);
 		const restMemeNames = memeNames.slice(indexToSlice);
+		console.log(characterCount);
 
 		channel.send(splitMemeNames.join(", "));
 		this.memes(command, client, emptyObject, restMemeNames);
