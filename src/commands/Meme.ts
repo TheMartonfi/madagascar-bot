@@ -66,11 +66,36 @@ export abstract class Meme {
 	}
 
 	@Command("memes")
-	private async memes({ channel, guild }: CommandMessage): Promise<Message> {
-		const memeNames = await this.getMemeNames(guild.id);
+	private async memes(
+		command: CommandMessage,
+		client: Client,
+		emptyObject: {},
+		moreMemeNames: string[] | undefined
+	): Promise<Message> {
+		const { channel, guild } = command;
 
-		if (memeNames.length) return channel.send(memeNames.join(", "));
-		channel.send("No memes were found.");
+		const memeNames = moreMemeNames || (await this.getMemeNames(guild.id));
+		console.log(memeNames);
+
+		if (!memeNames.length) return channel.send("No memes were found.");
+		const maxCharacterCount = 2000;
+
+		let indexToSlice: number;
+		const characterCount = memeNames.reduce((acc, curr, currIndex) => {
+			const count = acc + curr.length;
+			if (count > maxCharacterCount && !indexToSlice) indexToSlice = currIndex;
+
+			return count;
+		}, 0);
+
+		if (characterCount < maxCharacterCount)
+			return channel.send(memeNames.join(", "));
+
+		const splitMemeNames = memeNames.slice(0, indexToSlice);
+		const restMemeNames = memeNames.slice(indexToSlice);
+
+		channel.send(splitMemeNames.join(", "));
+		this.memes(command, client, emptyObject, restMemeNames);
 	}
 
 	@Command("search meme :name")
