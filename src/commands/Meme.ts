@@ -102,7 +102,9 @@ export abstract class Meme {
 		channel,
 		guild,
 		args: { name }
-	}: CommandMessage): Promise<void> {
+	}: CommandMessage): Promise<Message> {
+		if (!name) return channel.send("Please provide a search term.");
+
 		const results: string[] = [];
 		const formattedName = formatCommandName(name);
 
