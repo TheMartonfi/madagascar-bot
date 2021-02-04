@@ -4,7 +4,7 @@ import { info } from "./settings";
 
 const start = async (): Promise<void> => {
 	const client = new Client({
-		classes: [`${__dirname}/Discord.js`],
+		classes: [`${__dirname}/Discord.{js, ts}`],
 		silent: false,
 		variablesChar: ":"
 	});

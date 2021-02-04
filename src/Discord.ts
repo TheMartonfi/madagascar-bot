@@ -10,7 +10,7 @@ import {
 import { PREFIX } from "./settings";
 
 @Discord(PREFIX, {
-	import: [`${__dirname}/commands/*.js`, `${__dirname}/events/*.js`]
+	import: [`${__dirname}/commands/*.{js, ts}`, `${__dirname}/events/*.{js, ts}`]
 })
 export abstract class DiscordApp {
 	@On("ready")
@@ -20,7 +20,9 @@ export abstract class DiscordApp {
 
 	@Command("help")
 	private help({ channel }: CommandMessage): void {
-		channel.send("https://github.com/TheMartonfi/madagascar-bot");
+		channel.send(
+			"https://github.com/TheMartonfi/madagascar-bot/blob/master/README.md"
+		);
 	}
 
 	@Command("commands")
