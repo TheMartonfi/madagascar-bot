@@ -22,7 +22,10 @@ export abstract class Meme {
 			where: { guildId },
 			attributes: ["name"]
 		});
-		return memes.map(({ name }) => PREFIX + name);
+
+		return memes
+			.sort((a, b) => (a.name < b.name ? -1 : 1))
+			.map(({ name }) => PREFIX + name);
 	};
 
 	private isCommandName(name: string) {
@@ -223,8 +226,9 @@ export abstract class Meme {
 		const rowCount = await Memes.destroy({
 			where: { name: formattedName, guildId: guild.id }
 		});
+
 		if (!rowCount) return channel.send("That meme didn't exist.");
 
-		return channel.send(`Meme ${PREFIX + formattedName} successfully deleted.`);
+		channel.send(`Meme ${PREFIX + formattedName} successfully deleted.`);
 	}
 }
