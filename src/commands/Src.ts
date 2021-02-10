@@ -168,21 +168,19 @@ export abstract class Src {
 			where: { guildId: guild.id }
 		});
 
-		if (allNotifications.length)
-			return channel.send(
-				allNotifications
-					.map(
-						(notification) =>
-							`${notification.abbreviation}${
-								notification?.categoryName
-									? ` ${notification.categoryName}`
-									: ""
-							}`
-					)
-					.join(", ")
-			);
+		if (!allNotifications.length)
+			return channel.send("There are no src notifications.");
 
-		channel.send("There are no src notifications.");
+		channel.send(
+			allNotifications
+				.map(
+					(notification) =>
+						`${notification.abbreviation}${
+							notification?.categoryName ? ` ${notification.categoryName}` : ""
+						}`
+				)
+				.join(", ")
+		);
 	}
 
 	@Command("add src :abbreviation :categoryName")

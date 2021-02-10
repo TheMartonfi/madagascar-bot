@@ -200,14 +200,13 @@ export abstract class Meme {
 				{ where: { name: formattedOldName, guildId: guild.id } }
 			);
 
-			if (updateCount)
-				return channel.send(
-					`Successfully updated ${PREFIX + formattedOldName} to ${
-						PREFIX + formattedNewName
-					}.`
-				);
+			if (!updateCount) return channel.send("That meme doesn't exist.");
 
-			channel.send("That meme doesn't exist.");
+			channel.send(
+				`Successfully updated ${PREFIX + formattedOldName} to ${
+					PREFIX + formattedNewName
+				}.`
+			);
 		} catch (e) {
 			console.log(red, e);
 			channel.send(`There was an error updating ${PREFIX + formattedOldName}.`);
