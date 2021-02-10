@@ -1,6 +1,5 @@
 import { Client } from "@typeit/discord";
-import { BOT_TOKEN } from "./settings";
-import { blue } from "./settings";
+import { blue, BOT_TOKEN } from "settings";
 
 const start = async (): Promise<void> => {
 	const client = new Client({

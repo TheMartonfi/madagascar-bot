@@ -7,7 +7,7 @@ import {
 	On,
 	ArgsOf
 } from "@typeit/discord";
-import { PREFIX } from "./settings";
+import { PREFIX } from "settings";
 
 @Discord(PREFIX, {
 	import: [`${__dirname}/commands/*.{js, ts}`, `${__dirname}/events/*.{js, ts}`]

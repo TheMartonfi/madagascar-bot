@@ -1,7 +1,7 @@
 import { Command, CommandMessage, Guard } from "@typeit/discord";
-import { WordCounts } from "../db";
-import { PRIVATE_GUILD_ID, RICO_TRIGGER } from "../settings";
-import { OnlyGuild } from "../guards/OnlyGuild";
+import { WordCounts } from "db";
+import { PRIVATE_GUILD_ID, RICO_TRIGGER } from "settings";
+import { OnlyGuild } from "guards/OnlyGuild";
 
 // Private feature
 export abstract class Count {

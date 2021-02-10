@@ -7,8 +7,8 @@
 	"license": "MIT",
 	"scripts": {
 		"tsc:w": "tsc -w",
-		"start": "node build/index.js",
-		"start:dev": "concurrently \"yarn tsc:w\" \"nodemon build/index.js\"",
+		"start": "NODE_PATH=./build node build/index.js",
+		"start:dev": "NODE_PATH=./build concurrently \"yarn tsc:w\" \"nodemon build/index.js\"",
 		"build": "tsc",
 		"build:delete": "rm -rf build/*",
 		"db:migrate": "DB_MIGRATE=true node build/index.js",

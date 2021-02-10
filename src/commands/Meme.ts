@@ -8,9 +8,9 @@ import {
 } from "@typeit/discord";
 import { Message, MessageAttachment } from "discord.js";
 import { Memes } from "../db";
-import { PREFIX, PRIVATE_GUILD_ID, red } from "../settings";
-import { formatCommandName } from "../utils";
-import { NotBot } from "../guards/NotBot";
+import { PREFIX, PRIVATE_GUILD_ID, red } from "settings";
+import { formatCommandName } from "utils";
+import { NotBot } from "guards/NotBot";
 
 export abstract class Meme {
 	private makeMessageAttachment = (url: string): MessageAttachment | string => {

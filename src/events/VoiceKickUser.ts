@@ -1,9 +1,9 @@
 import { On, Guard, ArgsOf } from "@typeit/discord";
-import { WordCounts } from "../db";
-import { red, RICO_USER_ID, RICO_TRIGGER, RICO_ROOM_ID } from "../settings";
-import { NotBot } from "../guards/NotBot";
-import { OnlyRoom } from "../guards/OnlyRoom";
-import { OnlyWord } from "../guards/OnlyWord";
+import { WordCounts } from "db";
+import { red, RICO_USER_ID, RICO_TRIGGER, RICO_ROOM_ID } from "settings";
+import { NotBot } from "guards/NotBot";
+import { OnlyRoom } from "guards/OnlyRoom";
+import { OnlyWord } from "guards/OnlyWord";
 
 // Private feature
 export abstract class VoiceKickUser {

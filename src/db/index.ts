@@ -7,7 +7,7 @@ import {
 	DB_RESET,
 	RICO_TRIGGER,
 	PRIVATE_GUILD_ID
-} from "../settings";
+} from "settings";
 
 export interface Meme extends Model {
 	id: number;

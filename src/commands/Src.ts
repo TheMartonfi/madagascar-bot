@@ -8,9 +8,9 @@ import {
 } from "@typeit/discord";
 import axios from "axios";
 import { Message, MessageEmbed, TextChannel } from "discord.js";
-import { OnlyGuildOwner } from "../guards/OnlyGuildOwner";
-import { SrcNewRunNotifs } from "../db";
-import { red } from "../settings";
+import { OnlyGuildOwner } from "guards/OnlyGuildOwner";
+import { SrcNewRunNotifs } from "db";
+import { red } from "settings";
 
 interface SrcResponse<T> {
 	data: T;
