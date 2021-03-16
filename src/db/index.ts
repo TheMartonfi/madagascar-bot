@@ -35,7 +35,12 @@ export interface SrcNewRunNotif extends Model {
 
 const sequelize = new Sequelize(DATABASE_URL, {
 	dialect: "postgres",
-	dialectOptions: { ssl: true },
+	dialectOptions: {
+		ssl: {
+			require: true,
+			rejectUnauthorized: false
+		}
+	},
 	logging: (query: string) => console.log(yellow, query)
 });
 
