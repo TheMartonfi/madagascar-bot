@@ -34,7 +34,8 @@ export interface SrcNewRunNotif extends Model {
 }
 
 const sequelize = new Sequelize(DATABASE_URL, {
-	logging: (query: string) => console.log(yellow, query)
+	logging: (query: string) => console.log(yellow, query),
+	ssl: true
 });
 
 export const Memes = sequelize.define<Meme>("memes", {
