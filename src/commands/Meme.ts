@@ -6,7 +6,7 @@ import {
 	On,
 	ArgsOf
 } from "@typeit/discord";
-import { Message, MessageAttachment } from "discord.js";
+import { Message, MessageAttachment, Guild, GuildMember } from "discord.js";
 import { Memes } from "../db";
 import { PREFIX, PRIVATE_GUILD_ID, red } from "settings";
 import { formatCommandName } from "utils";
@@ -50,8 +50,16 @@ export abstract class Meme {
 			if (this.isCommandName(formattedCommandName)) return;
 
 			// Allow users from private guild to use our guild memes everywhere
-			const privateGuild = await client.guilds.fetch(PRIVATE_GUILD_ID);
-			const privateMember = await privateGuild.members.fetch(member.id);
+			let privateGuild: Guild;
+			let privateMember: GuildMember;
+
+			try {
+				privateGuild = await client.guilds.fetch(PRIVATE_GUILD_ID);
+				if (privateGuild)
+					privateMember = await privateGuild.members.fetch(member.id);
+			} catch (e) {
+				console.log(red, e);
+			}
 
 			const meme = await Memes.findOne({
 				where: {
