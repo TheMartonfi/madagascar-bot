@@ -1,6 +1,7 @@
 import { Sequelize, Model, STRING, TEXT, INTEGER, BIGINT } from "sequelize";
 import {
 	yellow,
+	ENV,
 	DATABASE_URL,
 	DB_MIGRATE,
 	DB_SEED,
@@ -33,16 +34,25 @@ export interface SrcNewRunNotif extends Model {
 	guildId: string;
 }
 
-const sequelize = new Sequelize(DATABASE_URL, {
+const devParams = {
+	logging: (query: string) => console.log(yellow, query)
+};
+
+const prodParams = {
+	...devParams,
 	dialect: "postgres",
 	dialectOptions: {
 		ssl: {
 			require: true,
 			rejectUnauthorized: false
 		}
-	},
-	logging: (query: string) => console.log(yellow, query)
-});
+	}
+};
+
+const sequelize = new Sequelize(
+	DATABASE_URL,
+	ENV === "development" ? devParams : prodParams
+);
 
 export const Memes = sequelize.define<Meme>("memes", {
 	name: {
